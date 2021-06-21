@@ -1,19 +1,17 @@
+import { ky } from "./deps.ts";
 import { LINE_ACCESS_TOKEN } from "./env.ts";
 import { Logger } from "./logger.ts";
 const url = "https://notify-api.line.me/api/notify";
 
-const body: URLSearchParams = new URLSearchParams({
-  message: "hello from deno!",
+const body = new URLSearchParams({
+  message: "hello from ky!",
 });
 
-const res = await fetch(url, {
-  method: "POST",
+const json = await ky.post(url, {
   headers: {
     Authorization: `Bearer ${LINE_ACCESS_TOKEN}`,
-    "Content-Type": "application/x-www-form-urlencoded",
   },
   body,
-});
+}).json();
 
-const json = await res.json();
 Logger.info(json);
