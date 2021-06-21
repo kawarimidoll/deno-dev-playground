@@ -1,3 +1,3 @@
-# deno-line-practice
+# deno-dev-playground
 
-use lineapi from deno
+my personal playground 🦕
