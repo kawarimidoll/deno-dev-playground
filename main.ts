@@ -1,17 +1,14 @@
-import { ky } from "./deps.ts";
+import { lineNotify } from "./line_notify.ts";
 import { LINE_ACCESS_TOKEN } from "./env.ts";
 import { Logger } from "./logger.ts";
-const url = "https://notify-api.line.me/api/notify";
 
-const body = new URLSearchParams({
-  message: "hello from ky!",
+const json = await lineNotify({
+  message: "good morning with image",
+  token: LINE_ACCESS_TOKEN,
+  imageFullsizeURL:
+    "https://storage.googleapis.com/zenn-user-upload/avatar/2379ac8d86.jpeg",
+  imageThumbnailURL:
+    "https://storage.googleapis.com/zenn-user-upload/avatar/2379ac8d86.jpeg",
 });
-
-const json = await ky.post(url, {
-  headers: {
-    Authorization: `Bearer ${LINE_ACCESS_TOKEN}`,
-  },
-  body,
-}).json();
 
 Logger.info(json);
