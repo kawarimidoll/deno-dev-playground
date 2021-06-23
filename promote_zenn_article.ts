@@ -34,7 +34,8 @@ const genPromotion = async (username: string) => {
   return `『${title}』という #Zenn 記事を書きました
 ${tagText}
 ${readTime}分くらいで読めるのでスキマ時間のお供にどうぞ
-${link}`;
+${link}
+（本ツイートはDeno🦕で自動生成しています）`;
 };
 
 export { genPromotion };
