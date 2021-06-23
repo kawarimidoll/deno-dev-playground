@@ -1,12 +1,17 @@
-name: welcome
+name: tweet_promote_zenn_article
 
 on:
-  # 04:10UTC -> 13:10JST
+  push:
+    branches:
+      - main
+  # 04:20UTC -> 13:20JST
   schedule:
     - cron: "10 4 * * *"
 
 env:
+  # all values in .env.example are required
   IFTTT_WEBHOOK_KEY: ${{secrets.IFTTT_WEBHOOK_KEY}}
+  # LINE_ACCESS_TOKEN: dummy
 
 jobs:
   promote:
@@ -17,4 +22,4 @@ jobs:
         uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      - run: deno run --allow-net --allow-read --allow-read=.env,.env.example,.env.defaults run_promote_zenn_article.ts
+      - run: deno run --allow-net --allow-read=.env,.env.example,.env.defaults run_promote_zenn_article.ts
