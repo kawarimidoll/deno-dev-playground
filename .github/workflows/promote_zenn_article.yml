@@ -8,11 +8,11 @@ on:
   schedule:
     - cron: "20 3 * * *"
 
-env:
-  # all values in .env.example are required
-  IFTTT_WEBHOOK_KEY: ${{ secrets.IFTTT_WEBHOOK_KEY }}
-  LINE_ACCESS_TOKEN: dummy
-  PIXELA_TOKEN: dummy
+# env:
+#   # all values in .env.example are required
+#   IFTTT_WEBHOOK_KEY: ${{ secrets.IFTTT_WEBHOOK_KEY }}
+#   LINE_ACCESS_TOKEN: dummy
+#   PIXELA_TOKEN: dummy
 
 jobs:
   promote:
@@ -27,5 +27,6 @@ jobs:
         run: |
           touch .env
           echo IFTTT_WEBHOOK_KEY=${{ secrets.IFTTT_WEBHOOK_KEY }} >> .env
-          echo LINE_ACCESS_TOKEN=${{ secrets.LINE_ACCESS_TOKEN }} >> .env
+          echo LINE_ACCESS_TOKEN=dummy >> .env
+          echo PIXELA_TOKEN=dummy >> .env
       - run: deno run --allow-net --allow-read=.env,.env.example,.env.defaults --allow-env run_promote_zenn_article.ts
