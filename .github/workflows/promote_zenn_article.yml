@@ -4,14 +4,14 @@ on:
   push:
     branches:
       - main
-  # 04:20UTC -> 13:20JST
+  # 03:20UTC -> 12:20JST
   schedule:
-    - cron: "10 4 * * *"
+    - cron: "20 3 * * *"
 
 env:
   # all values in .env.example are required
   IFTTT_WEBHOOK_KEY: ${{secrets.IFTTT_WEBHOOK_KEY}}
-  # LINE_ACCESS_TOKEN: dummy
+  LINE_ACCESS_TOKEN: dummy
 
 jobs:
   promote:
