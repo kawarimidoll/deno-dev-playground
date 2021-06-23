@@ -12,6 +12,7 @@ env:
   # all values in .env.example are required
   IFTTT_WEBHOOK_KEY: ${{secrets.IFTTT_WEBHOOK_KEY}}
   LINE_ACCESS_TOKEN: dummy
+  PIXELA_TOKEN: dummy
 
 jobs:
   promote:
