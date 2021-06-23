@@ -7,7 +7,8 @@ const sendTweet = async (params: { message: string; key: string }) => {
   try {
     return await ky.post(key, { prefixUrl, json: { value1: message } }).text();
   } catch (error) {
-    return await error.response.text();
+    console.error(await error);
+    return await error.response?.text();
   }
 };
 
