@@ -8,6 +8,8 @@ scripts:
   start:
     desc: Runs main script
     cmd: main.ts
+  promote_zenn_article:
+    cmd: promote_zenn_article.ts
   # test: deno test
   lint: deno lint
   format: deno fmt

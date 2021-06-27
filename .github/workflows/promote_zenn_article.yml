@@ -13,12 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Setup Deno
-        uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
+      - uses: denoland/setup-deno@v1
+      - uses: jurassiscripts/setup-velociraptor@v1
       - name: Create env file
         run: |
           cp .env.example .env
           echo IFTTT_WEBHOOK_KEY=${{ secrets.IFTTT_WEBHOOK_KEY }} >> .env
-      - run: deno run --allow-net --allow-read=.env,.env.example,.env.defaults --allow-env promote_zenn_article.ts
+      - run: vr promote_zenn_article
