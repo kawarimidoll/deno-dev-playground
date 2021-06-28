@@ -12,7 +12,7 @@ if (!article) {
   throw new Error("No articles found");
 }
 
-const { title, emoji, topics, readingTime } = article;
+const { title, emoji, articleType, topics, readingTime } = article;
 const link = zennLink(article);
 
 const genTopicsText = (topics: ZennTopic[]) =>
@@ -22,7 +22,7 @@ const genTopicsText = (topics: ZennTopic[]) =>
     ).join("") + "についていろいろ書いています"
     : "";
 
-const message = `『${emoji} ${title}』という #Zenn 記事を書きました
+const message = `#Zenn で『${emoji} ${title}』という${articleType}記事を書きました
 ${genTopicsText(topics)}
 ${readingTime}分くらいで読めるのでスキマ時間のお供にどうぞ
 ${link}
