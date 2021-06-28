@@ -63,5 +63,35 @@ const extractedContributions: number[][] = weeks.map((
     },
   )
 );
-console.log(maxContributionsCount);
-console.log(extractedContributions);
+// console.log(maxContributionsCount);
+// console.log(extractedContributions);
+
+// const colors = [
+//   "#ebedf0",
+//   "#9be9a8",
+//   "#40c463",
+//   "#30a14e",
+//   "#216e39",
+// ];
+
+const fillPixel = (count: number) => {
+  if (count === 0) {
+    return { r: 253, g: 237, b: 240 };
+  } else if (count < maxContributionsCount / 4) {
+    return { r: 155, g: 233, b: 168 };
+  } else if (count < maxContributionsCount / 2) {
+    return { r: 64, g: 196, b: 99 };
+  } else if (count < maxContributionsCount * 3 / 4) {
+    return { r: 48, g: 161, b: 78 };
+  }
+  return { r: 33, g: 110, b: 57 };
+};
+
+const grass = (count?: number) =>
+  (count == null) ? "" : rgb24("■", fillPixel(count));
+
+extractedContributions[0].forEach((_, i) => {
+  console.log(
+    extractedContributions.map((row) => grass(row[i])).join(""),
+  );
+});
