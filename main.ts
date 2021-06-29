@@ -1,6 +1,20 @@
-import { ky } from "./deps.ts";
+import { ky, rgb24 } from "./deps.ts";
 import { GITHUB_READ_USER_TOKEN } from "./env.ts";
-import { rgb24 } from "https://deno.land/std@0.99.0/fmt/colors.ts";
+
+// https://lab.syncer.jp/Web/JavaScript/Snippet/61/
+const hexToRgb = (hex: string) => {
+  if (hex.slice(0, 1) == "#") hex = hex.slice(1);
+  if (hex.length == 3) {
+    hex = hex.slice(0, 1) + hex.slice(0, 1) + hex.slice(1, 2) +
+      hex.slice(1, 2) + hex.slice(2, 3) + hex.slice(2, 3);
+  }
+
+  const r = parseInt("0x" + hex.slice(0, 2));
+  const g = parseInt("0x" + hex.slice(2, 4));
+  const b = parseInt("0x" + hex.slice(4, 6));
+
+  return { r, g, b };
+};
 
 const userName = "kawarimidoll";
 
@@ -12,7 +26,9 @@ const query = `
          totalContributions
          weeks {
            contributionDays {
+             color
              contributionCount
+             contributionLevel
              date
            }
          }
@@ -36,7 +52,16 @@ const { data } = await ky.post(url, {
   json,
 }).json();
 
-const { weeks, totalContributions } = data?.user?.contributionsCollection
+interface ContributionDay {
+  contributionCount: number;
+  contributionLevel: string;
+  date: string;
+  color: string;
+}
+const { weeks, totalContributions }: {
+  weeks: { contributionDays: ContributionDay[] }[];
+  totalContributions: number;
+} = data?.user?.contributionsCollection
   ?.contributionCalendar;
 
 if (!weeks || !totalContributions) {
@@ -45,53 +70,79 @@ if (!weeks || !totalContributions) {
 
 console.log(totalContributions + " contributions in the last year");
 
-let maxContributionsCount = 0;
-interface ContributionDay {
-  contributionCount: number;
-  date: string;
-}
+// console.log(weeks[weeks.length - 1]);
+// console.log(weeks.slice(weeks.length - 7));
+// console.log(weeks.length);
 
-const extractedContributions: number[][] = weeks.map((
-  week: { contributionDays: ContributionDay[] },
-) =>
-  week.contributionDays.map(
-    (day) => {
-      if (day.contributionCount > maxContributionsCount) {
-        maxContributionsCount = day.contributionCount;
-      }
-      return day.contributionCount;
-    },
-  )
-);
+// weeks[0].contributionDays.forEach((_, i) => {
+//   console.log(
+//     weeks.map((row) =>
+//       `${row.contributionDays[i]?.contributionCount ?? ""}`.padStart(3)
+//     ).join(""),
+//   );
+// });
+
+// let maxContributionsCount = 0;
+// const extractedContributions: ContributionDay[][] = weeks.map((
+//   week: { contributionDays: ContributionDay[] },
+// ) =>
+//   week.contributionDays.map(
+//     (day) => {
+//       if (day.contributionCount > maxContributionsCount) {
+//         maxContributionsCount = day.contributionCount;
+//       }
+//       return day;
+//     },
+//   )
+// );
 // console.log(maxContributionsCount);
 // console.log(extractedContributions);
 
-// const colors = [
-//   "#ebedf0",
-//   "#9be9a8",
-//   "#40c463",
-//   "#30a14e",
-//   "#216e39",
-// ];
+const colors = [
+  // "#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39",
+  "#eeeeee",
+  "#f8bbd0",
+  "#f06292",
+  "#e91e63",
+  "#880e4f",
+];
 
-const fillPixel = (count: number) => {
-  if (count === 0) {
-    return { r: 253, g: 237, b: 240 };
-  } else if (count < maxContributionsCount / 4) {
-    return { r: 155, g: 233, b: 168 };
-  } else if (count < maxContributionsCount / 2) {
-    return { r: 64, g: 196, b: 99 };
-  } else if (count < maxContributionsCount * 3 / 4) {
-    return { r: 48, g: 161, b: 78 };
+const fillPixel = (day?: ContributionDay) => {
+  switch (day?.contributionLevel) {
+    case "NONE":
+      return hexToRgb(colors[0]);
+    case "FIRST_QUARTILE":
+      return hexToRgb(colors[1]);
+    case "SECOND_QUARTILE":
+      return hexToRgb(colors[2]);
+    case "THIRD_QUARTILE":
+      return hexToRgb(colors[3]);
+    case "FOURTH_QUARTILE":
+      return hexToRgb(colors[4]);
   }
-  return { r: 33, g: 110, b: 57 };
+  return hexToRgb("#eeeeee");
 };
 
-const grass = (count?: number) =>
-  (count == null) ? "" : rgb24("■", fillPixel(count));
+const grass = (day?: ContributionDay) =>
+  day?.color ? rgb24("■", fillPixel(day)) : "";
+// day?.color ? rgb24("■", hexToRgb(day.color)) : "";
 
-extractedContributions[0].forEach((_, i) => {
+// const grass = (color?: string) =>
+//   color
+//     ? rgb24("■", {
+//       r: parseInt(`0x${color.slice(1, 3)}`),
+//       b: parseInt(`0x${color.slice(3, 5)}`),
+//       g: parseInt(`0x${color.slice(5, 7)}`),
+//     })
+//     : "";
+
+// weeks[0].contributionDays.forEach((_, i) => {
+//   console.log(
+//     weeks.map((row) => grass(row.contributionDays[i]?.color)).join(""),
+//   );
+// });
+weeks[0].contributionDays.forEach((_, i) => {
   console.log(
-    extractedContributions.map((row) => grass(row[i])).join(""),
+    weeks.map((row) => grass(row.contributionDays[i])).join(""),
   );
 });

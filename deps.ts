@@ -8,6 +8,7 @@ import {
 } from "https://deno.land/x/rss@0.3.6/mod.ts";
 import { DOMParser } from "https://deno.land/x/deno_dom@v0.1.12-alpha/deno-dom-wasm.ts";
 import { download } from "https://deno.land/x/download@v1.0.1/mod.ts";
+import { rgb24 } from "https://deno.land/std@0.99.0/fmt/colors.ts";
 
-export { deserializeFeed, DOMParser, download, FeedType, ky };
+export { deserializeFeed, DOMParser, download, FeedType, ky, rgb24 };
 export type { Feed, RSS1, RSS2 };
