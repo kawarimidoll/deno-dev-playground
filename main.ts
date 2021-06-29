@@ -58,6 +58,7 @@ interface ContributionDay {
   date: string;
   color: string;
 }
+
 const { weeks, totalContributions }: {
   weeks: { contributionDays: ContributionDay[] }[];
   totalContributions: number;
@@ -72,75 +73,87 @@ console.log(totalContributions + " contributions in the last year");
 
 // console.log(weeks[weeks.length - 1]);
 // console.log(weeks.slice(weeks.length - 7));
-// console.log(weeks.length);
 
-// weeks[0].contributionDays.forEach((_, i) => {
-//   console.log(
-//     weeks.map((row) =>
-//       `${row.contributionDays[i]?.contributionCount ?? ""}`.padStart(3)
-//     ).join(""),
-//   );
-// });
+// [williambelle/github-contribution-color-graph: Change colors of contribution graph in GitHub.](https://github.com/williambelle/github-contribution-color-graph)
+const github = ["#9be9a8", "#40c463", "#30a14e", "#216e39"];
+const halloween = ["#fdf156", "#ffc722", "#ff9711", "#04001b"];
+const amber = ["#ffecb3", "#ffd54f", "#ffb300", "#ff6f00"];
+const blue = ["#bbdefb", "#64b5f6", "#1e88e5", "#0d47a1"];
+const bluegrey = ["#cfd8dc", "#90a4ae", "#546e7a", "#263238"];
+const brown = ["#d7ccc8", "#a1887f", "#6d4c41", "#3e2723"];
+const cyan = ["#b2ebf2", "#4dd0e1", "#00acc1", "#006064"];
+const deeporange = ["#ffccbc", "#ff8a65", "#f4511e", "#bf360c"];
+const deeppurple = ["#d1c4e9", "#9575cd", "#5e35b1", "#311b92"];
+const green = ["#c8e6c9", "#81c784", "#43a047", "#1b5e20"];
+const grey = ["#e0e0e0", "#9e9e9e", "#616161", "#212121"];
+const indigo = ["#c5cae9", "#7986cb", "#3949ab", "#1a237e"];
+const lightblue = ["#b3e5fc", "#4fc3f7", "#039be5", "#01579b"];
+const lightgreen = ["#dcedc8", "#aed581", "#7cb342", "#33691e"];
+const lime = ["#f0f4c3", "#dce775", "#c0ca33", "#827717"];
+const orange = ["#ffe0b2", "#ffb74d", "#fb8c00", "#e65100"];
+const pink = ["#f8bbd0", "#f06292", "#e91e63", "#880e4f"];
+const purple = ["#e1bee7", "#ba68c8", "#8e24aa", "#4a148c"];
+const red = ["#ffcdd2", "#e57373", "#e53935", "#b71c1c"];
+const teal = ["#b2dfdb", "#4db6ac", "#00897b", "#004d40"];
+const yellowMd = ["#fff9c4", "#fff176", "#ffd835", "#f57f17"];
+const unicorn = ["#6dc5fb", "#f6f68c", "#8affa4", "#f283d1"];
+const summer = ["#eae374", "#f9d62e", "#fc913a", "#ff4e50"];
+const sunset = ["#fed800", "#ff6f01", "#fd2f24", "#811d5e"];
+const moon = ["#6bcdff", "#00a1f3", "#48009a", "#4f2266"];
+const psychedelic = ["#faafe1", "#fb6dcc", "#fa3fbc", "#ff00ab"];
+const yellow = ["#d7d7a2", "#d4d462", "#e0e03f", "#ffff00"];
 
-// let maxContributionsCount = 0;
-// const extractedContributions: ContributionDay[][] = weeks.map((
-//   week: { contributionDays: ContributionDay[] },
-// ) =>
-//   week.contributionDays.map(
-//     (day) => {
-//       if (day.contributionCount > maxContributionsCount) {
-//         maxContributionsCount = day.contributionCount;
-//       }
-//       return day;
-//     },
-//   )
-// );
-// console.log(maxContributionsCount);
-// console.log(extractedContributions);
-
-const colors = [
-  // "#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39",
-  "#eeeeee",
-  "#f8bbd0",
-  "#f06292",
-  "#e91e63",
-  "#880e4f",
-];
+const colorSchemes = {
+  github,
+  halloween,
+  amber,
+  blue,
+  bluegrey,
+  brown,
+  cyan,
+  deeporange,
+  deeppurple,
+  green,
+  grey,
+  indigo,
+  lightblue,
+  lightgreen,
+  lime,
+  orange,
+  pink,
+  purple,
+  red,
+  teal,
+  yellowMd,
+  summer,
+  unicorn,
+  sunset,
+  moon,
+  psychedelic,
+  yellow,
+};
+const colorSchemeName = "moon";
+const baseColor = "#eeeeee";
 
 const fillPixel = (day?: ContributionDay) => {
+  const colors = colorSchemes[colorSchemeName];
   switch (day?.contributionLevel) {
-    case "NONE":
-      return hexToRgb(colors[0]);
     case "FIRST_QUARTILE":
-      return hexToRgb(colors[1]);
+      return hexToRgb(colors[0]);
     case "SECOND_QUARTILE":
-      return hexToRgb(colors[2]);
+      return hexToRgb(colors[1]);
     case "THIRD_QUARTILE":
-      return hexToRgb(colors[3]);
+      return hexToRgb(colors[2]);
     case "FOURTH_QUARTILE":
-      return hexToRgb(colors[4]);
+      return hexToRgb(colors[3]);
   }
-  return hexToRgb("#eeeeee");
+  // case "NONE" or undefined
+  return hexToRgb(baseColor);
 };
 
 const grass = (day?: ContributionDay) =>
   day?.color ? rgb24("■", fillPixel(day)) : "";
-// day?.color ? rgb24("■", hexToRgb(day.color)) : "";
 
-// const grass = (color?: string) =>
-//   color
-//     ? rgb24("■", {
-//       r: parseInt(`0x${color.slice(1, 3)}`),
-//       b: parseInt(`0x${color.slice(3, 5)}`),
-//       g: parseInt(`0x${color.slice(5, 7)}`),
-//     })
-//     : "";
-
-// weeks[0].contributionDays.forEach((_, i) => {
-//   console.log(
-//     weeks.map((row) => grass(row.contributionDays[i]?.color)).join(""),
-//   );
-// });
 weeks[0].contributionDays.forEach((_, i) => {
   console.log(
     weeks.map((row) => grass(row.contributionDays[i])).join(""),
