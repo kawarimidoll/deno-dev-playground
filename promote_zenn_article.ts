@@ -26,7 +26,7 @@ const message = `#Zenn で『${emoji} ${title}』という${articleType}記事�
 ${genTopicsText(topics)}
 ${readingTime}分くらいで読めるのでスキマ時間のお供にどうぞ
 ${link}
-（本ツイートはDeno🦕で自動生成しています）`;
+（本ツイートは #Deno 🦕 で自動生成しています）`;
 
 console.log(message);
 console.log(await sendTweet({ message, key: IFTTT_WEBHOOK_KEY }));
