@@ -1,10 +1,33 @@
-import { getContributions } from "https://github.com/kawarimidoll/deno-github-contributions-api/raw/main/mod.ts";
+import { parse } from "https://deno.land/std@0.100.0/flags/mod.ts";
+import { resolve } from "https://deno.land/std@0.100.0/path/mod.ts";
+import { walk } from "https://deno.land/std@0.100.0/fs/mod.ts";
 
-import { GITHUB_READ_USER_TOKEN } from "./env.ts";
+const { depth = "2", type, help, regex, _: [dir = "."] } = parse(Deno.args);
 
-const username = "kawarimidoll";
-const token = GITHUB_READ_USER_TOKEN;
+if (help) {
+  console.log("denofind");
+  console.log("Usage");
+  console.log(`  denofind --type=file --regex="*.\.ts" --depth=3 target_dir`);
+  Deno.exit(0);
+}
 
-const contributions = await getContributions(username, token);
+const types = type ? (Array.isArray(type) ? type : [type]) : ["file", "dir"];
+const match = regex
+  ? (Array.isArray(regex) ? regex : [regex]).map(
+    (str) => new RegExp(str),
+  )
+  : undefined;
 
-console.log(contributions.toTerm({ scheme: "random" }));
+const options = {
+  maxDepth: Number(depth),
+  includeFiles: types.includes("file"),
+  includeDirs: types.includes("dir"),
+  match,
+  skip: [/\.git$/],
+};
+
+const dirFullPath = resolve(Deno.cwd(), String(dir));
+console.log(dirFullPath);
+for await (const entry of walk(dirFullPath, options)) {
+  console.log(entry.name + (entry.isDirectory ? "/" : ""));
+}
