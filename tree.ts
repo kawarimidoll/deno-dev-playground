@@ -93,8 +93,30 @@ const {
   a,
   d,
   L,
+  u,
   _: [dir = "."],
 } = parse(Deno.args);
+
+const skip = [];
+if (!a) {
+  skip.push(/(^|\/)\./);
+}
+if (!u) {
+  const process = Deno.run({
+    cmd: ["git", "status", "--ignored", "-s"],
+    stdout: "piped",
+    stderr: "piped",
+  });
+  const outStr = new TextDecoder().decode(await process.output());
+  process.close();
+  const ignoredList = outStr.replace(/^[^!].+$/gm, "").replace(/^!! /mg, "")
+    .split("\n").filter((item) => item).concat(".git");
+
+  ignoredList.forEach((str) => {
+    skip.push(new RegExp(str.replace(".", "\\.")));
+  });
+}
+
 console.log(dir);
 await tree(resolve(Deno.cwd(), String(dir)), "", {
   maxDepth: L,
@@ -102,5 +124,5 @@ await tree(resolve(Deno.cwd(), String(dir)), "", {
   followSymlinks: false,
   exts: undefined,
   match: undefined,
-  skip: a ? undefined : [/(^|\/)\./],
+  skip,
 });
