@@ -1,6 +1,6 @@
 allow:
   - write=app.log
-  - read=.env,.env.example,.env.defaults
+  - read
   - env
   - net
 
@@ -8,6 +8,7 @@ scripts:
   start:
     desc: Runs main script
     cmd: main.ts
+    unstable: true
   promote_zenn_article:
     cmd: promote_zenn_article.ts
   # test: deno test

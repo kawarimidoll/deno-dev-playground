@@ -1,6 +1,6 @@
 import { parse } from "https://deno.land/std@0.100.0/flags/mod.ts";
-import { resolve } from "https://deno.land/std@0.100.0/path/mod.ts";
-import { walk } from "https://deno.land/std@0.100.0/fs/mod.ts";
+import { relative, resolve } from "https://deno.land/std@0.100.0/path/mod.ts";
+import { walk, WalkEntry } from "https://deno.land/std@0.100.0/fs/mod.ts";
 
 const { depth = "2", type, help, regex, _: [dir = "."] } = parse(Deno.args);
 
@@ -19,7 +19,7 @@ const match = regex
   : undefined;
 
 const options = {
-  maxDepth: Number(depth),
+  maxDepth: Number(depth + 10),
   includeFiles: types.includes("file"),
   includeDirs: types.includes("dir"),
   match,
@@ -27,7 +27,19 @@ const options = {
 };
 
 const dirFullPath = resolve(Deno.cwd(), String(dir));
-console.log(dirFullPath);
+const entries: WalkEntry[] = [];
 for await (const entry of walk(dirFullPath, options)) {
-  console.log(entry.name + (entry.isDirectory ? "/" : ""));
+  entries.push(entry);
 }
+
+entries.sort((a, b) => a.path > b.path ? 1 : -1).forEach((entry) => {
+  console.log(
+    entry.path === dirFullPath
+      ? "."
+      : relative(dirFullPath, entry.path).replace(
+        entry.name,
+        "|--" + entry.name,
+      )
+        .replace(/[^\/]+\//g, "|  "),
+  );
+});
