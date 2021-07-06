@@ -1,7 +1,9 @@
 import { parse } from "https://deno.land/std@0.100.0/flags/mod.ts";
 import { join, resolve } from "https://deno.land/std@0.100.0/path/mod.ts";
 
-// WalkEntry of https://deno.land/std@0.100.0/fs/mod.ts
+// ref: WalkEntry and WalkOptions
+// in  https://deno.land/std@0.100.0/fs/mod.ts
+
 export interface TreeEntry extends Deno.DirEntry {
   path: string;
 }
@@ -94,8 +96,27 @@ const {
   d,
   L,
   u,
+  h,
   _: [dir = "."],
 } = parse(Deno.args);
+
+if (h) {
+  const msg = `denotree
+  'tree' powered by Deno
+
+  USAGE
+    denotree [dirname] : Show children of dirname. default dirname is pwd.
+
+  OPTIONS
+    a     : Show dotfiles
+    d     : Show only directories
+    u     : Show git ignored files
+    L=num : Limit depth
+    h     : Show this help message
+  `;
+  console.log(msg);
+  Deno.exit(0);
+}
 
 const skip = [];
 if (!a) {
