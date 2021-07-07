@@ -10,5 +10,18 @@ import { DOMParser } from "https://deno.land/x/deno_dom@v0.1.12-alpha/deno-dom-w
 import { download } from "https://deno.land/x/download@v1.0.1/mod.ts";
 import { rgb24 } from "https://deno.land/std@0.99.0/fmt/colors.ts";
 
-export { deserializeFeed, DOMParser, download, FeedType, ky, rgb24 };
+import compareAsc from "https://deno.land/x/date_fns@v2.22.1/compareAsc/index.ts";
+import add from "https://deno.land/x/date_fns@v2.22.1/add/index.ts";
+const addDate = add;
+
+export {
+  addDate,
+  compareAsc,
+  deserializeFeed,
+  DOMParser,
+  download,
+  FeedType,
+  ky,
+  rgb24,
+};
 export type { Feed, RSS1, RSS2 };

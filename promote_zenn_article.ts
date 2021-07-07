@@ -1,4 +1,5 @@
 import { IFTTT_WEBHOOK_KEY } from "./env.ts";
+import { addDate, compareAsc } from "./deps.ts";
 import { sendTweet } from "./tweet_with_ifttt.ts";
 import {
   zennApi,
@@ -12,7 +13,14 @@ if (!article) {
   throw new Error("No articles found");
 }
 
-const { title, emoji, articleType, topics, readingTime } = article;
+const { title, emoji, articleType, topics, readingTime, publishedAt } = article;
+const isNotLatest =
+  compareAsc(addDate(new Date(publishedAt), { days: 1 }), new Date()) < 0;
+if (!isNotLatest) {
+  console.log("The article is already promoted.");
+  Deno.exit(0);
+}
+
 const link = zennLink(article);
 
 const genTopicsText = (topics: ZennTopic[]) =>
