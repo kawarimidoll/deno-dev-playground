@@ -5,6 +5,8 @@ const {
   LINE_ACCESS_TOKEN,
   PIXELA_TOKEN,
   GITHUB_READ_USER_TOKEN,
+  RAKUTEN_MAIL,
+  RAKUTEN_PASS,
 } = config({ safe: true });
 
 export {
@@ -12,4 +14,6 @@ export {
   IFTTT_WEBHOOK_KEY,
   LINE_ACCESS_TOKEN,
   PIXELA_TOKEN,
+  RAKUTEN_MAIL,
+  RAKUTEN_PASS,
 };
