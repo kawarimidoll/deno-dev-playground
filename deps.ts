@@ -12,10 +12,9 @@ import { rgb24 } from "https://deno.land/std@0.99.0/fmt/colors.ts";
 
 import compareAsc from "https://deno.land/x/date_fns@v2.22.1/compareAsc/index.ts";
 import add from "https://deno.land/x/date_fns@v2.22.1/add/index.ts";
-const addDate = add;
 
 export {
-  addDate,
+  add as addDate,
   compareAsc,
   deserializeFeed,
   DOMParser,
