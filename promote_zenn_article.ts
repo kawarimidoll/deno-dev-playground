@@ -8,15 +8,16 @@ import {
 } from "https://github.com/kawarimidoll/deno-zenn-api/raw/main/mod.ts";
 
 const { articles } = await zennApi("kawarimidoll");
-const article = articles[0];
-if (!article) {
+if (!articles || !articles[0]) {
   throw new Error("No articles found");
 }
 
+const article = articles[0];
+
 const { title, emoji, articleType, topics, readingTime, publishedAt } = article;
-const isNotLatest =
-  compareAsc(addDate(new Date(publishedAt), { days: 1 }), new Date()) < 0;
-if (!isNotLatest) {
+const isLatest =
+  compareAsc(addDate(new Date(publishedAt), { days: 1 }), new Date()) > 0;
+if (!isLatest) {
   console.log("The article is already promoted.");
   Deno.exit(0);
 }
