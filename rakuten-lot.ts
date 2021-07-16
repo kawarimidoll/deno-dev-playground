@@ -28,7 +28,11 @@ async function elementInPage(
   }
 }
 
-async function playLot(page: Page, link = ""): Promise<void> {
+async function playLot(
+  page: Page,
+  link = "",
+  { entrySelector = "#entry" } = {},
+): Promise<void> {
   if (!link) {
     return;
   }
@@ -56,13 +60,13 @@ async function playLot(page: Page, link = ""): Promise<void> {
     return;
   }
 
-  if (!(await elementInPage(page, "#entry"))) {
-    log("there is no #entry element in the page.");
+  if (!(await elementInPage(page, entrySelector))) {
+    log(`there is no ${entrySelector} element in the page.`);
     return;
   }
 
   log("playing");
-  await page.click("#entry");
+  await page.click(entrySelector);
   log("wait...");
   await page.waitForTimeout(16000);
   log("play finished");
@@ -89,6 +93,14 @@ for (const idx of [0, 1]) {
     }
   }
 }
+
+// special lots
+await playLot(page, "https://point.rakuten.co.jp/doc/lottery/lucky/", {
+  entrySelector: "#cp_btn_start img",
+});
+// await playLot(page, "https://pointmall.rakuten.co.jp/", {
+//   entrySelector: ".TOP-daily-btn img",
+// });
 
 await browser.close();
 log("finish rakuten-lot");
