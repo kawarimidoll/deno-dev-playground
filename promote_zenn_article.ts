@@ -25,9 +25,9 @@ const link = zennLink(article);
 
 const genTopicsText = (topics: ZennTopic[]) =>
   topics[0]
-    ? topics.sort((a, b) => b.taggingsCount - a.taggingsCount).map((t) =>
-      t.displayName + "とか"
-    ).join("") + "についていろいろ書いています"
+    ? topics.sort((a, b) => b.taggingsCount - a.taggingsCount).slice(0, 2).map((
+      t,
+    ) => t.displayName + "とか").join("") + "についていろいろ書いています"
     : "";
 
 const message = `#Zenn で『${emoji} ${title}』という${articleType}記事を書きました
