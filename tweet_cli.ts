@@ -3,7 +3,7 @@ import { sendTweet } from "./tweet.ts";
 
 // deno install --allow-read --allow-env --allow-net --force tweet_cli.ts
 
-const message = Deno.args[0];
+const message = Deno.args.join(" ");
 if (!message) {
   console.warn("No message found");
   Deno.exit(1);
