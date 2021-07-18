@@ -1,5 +1,5 @@
-import { TwitterApi } from "https://raw.githubusercontent.com/stefanuros/deno_twitter_api/master/mod.ts";
-// import { TwitterApi } from "https://deno.land/x/deno_twitter_api@v1.1.0/mod.ts";
+import { TwitterApi } from "./deps.ts";
+
 import {
   TWITTER_ACCESS_TOKEN,
   TWITTER_ACCESS_TOKEN_SECRET,
