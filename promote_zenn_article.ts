@@ -1,6 +1,5 @@
-import { IFTTT_WEBHOOK_KEY } from "./env.ts";
 import { addDate, compareAsc } from "./deps.ts";
-import { sendTweet } from "./tweet_with_ifttt.ts";
+import { sendTweet } from "./tweet.ts";
 import {
   zennApi,
   zennLink,
@@ -38,4 +37,4 @@ ${link}
 （本ツイートは #Deno 🦕 で自動生成しています）`;
 
 console.log(message);
-console.log(await sendTweet({ message, key: IFTTT_WEBHOOK_KEY }));
+console.log(await sendTweet(message));
