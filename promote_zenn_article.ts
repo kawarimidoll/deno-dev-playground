@@ -18,7 +18,7 @@ const isLatest =
   compareAsc(addDate(new Date(publishedAt), { days: 1 }), new Date()) > 0;
 if (!isLatest) {
   console.log("The article is already promoted.");
-  // Deno.exit(0);
+  Deno.exit(0);
 }
 
 const link = zennLink(article);

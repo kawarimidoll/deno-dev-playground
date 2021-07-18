@@ -1,9 +1,9 @@
 name: tweet_promote_zenn_article
 
 on:
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
   # 03:20UTC -> 12:20JST
   schedule:
     - cron: "20 3 * * *"
