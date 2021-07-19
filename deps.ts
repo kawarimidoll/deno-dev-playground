@@ -1,4 +1,5 @@
 import ky from "https://cdn.skypack.dev/ky@0.28.5?dts";
+import stringWidth from "https://cdn.skypack.dev/string-width@v5.0.0?dts";
 import {
   deserializeFeed,
   Feed,
@@ -28,6 +29,7 @@ export {
   ky,
   parse,
   rgb24,
+  stringWidth,
   TwitterApi,
 };
 export type { Feed, RSS1, RSS2 };
