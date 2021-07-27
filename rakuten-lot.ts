@@ -73,34 +73,38 @@ async function playLot(
 }
 
 log("start rakuten-lot");
-// const browser = await puppeteer.launch({ headless: false });
-const browser = await puppeteer.launch();
-const page = await browser.newPage();
-log("puppeteer launched");
+try {
+  // const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  log("puppeteer launched");
 
-const tables = dom.getElementsByTagName("table");
+  const tables = dom.getElementsByTagName("table");
 
-for (const idx of [0, 1]) {
-  if (idx === 1) {
-    await page.emulate(puppeteer.devices["iPhone 11"]);
-  }
+  for (const idx of [0, 1]) {
+    if (idx === 1) {
+      await page.emulate(puppeteer.devices["iPhone 11"]);
+    }
 
-  for (const link of tables[idx].getElementsByTagName("a")) {
-    try {
-      await playLot(page, link.getAttribute("href") || "");
-    } catch (e) {
-      warn(e);
+    for (const link of tables[idx].getElementsByTagName("a")) {
+      try {
+        await playLot(page, link.getAttribute("href") || "");
+      } catch (e) {
+        warn(e);
+      }
     }
   }
+
+  // special lots
+  await playLot(page, "https://point.rakuten.co.jp/doc/lottery/lucky/", {
+    entrySelector: "#cp_btn_start img",
+  });
+  // await playLot(page, "https://pointmall.rakuten.co.jp/", {
+  //   entrySelector: ".TOP-daily-btn img",
+  // });
+
+  await browser.close();
+} catch (e) {
+  console.error(e);
 }
-
-// special lots
-await playLot(page, "https://point.rakuten.co.jp/doc/lottery/lucky/", {
-  entrySelector: "#cp_btn_start img",
-});
-// await playLot(page, "https://pointmall.rakuten.co.jp/", {
-//   entrySelector: ".TOP-daily-btn img",
-// });
-
-await browser.close();
 log("finish rakuten-lot");
