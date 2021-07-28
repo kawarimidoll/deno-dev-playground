@@ -1,5 +1,5 @@
 // [Build a live reloader and explore Deno! 🦕 - DEV Community](https://dev.to/otanriverdi/let-s-explore-deno-by-building-a-live-reloader-j47)
-export async function watcher(
+export async function watchChanges(
   path: string,
   onChange: (event: Deno.FsEvent) => void,
   config = { interval: 500 },

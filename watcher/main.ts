@@ -1,8 +1,17 @@
-import { watcher } from "./watcher.ts";
+import { watchChanges } from "./watcher.ts";
+import { runAndWatchErrors } from "./runner.ts";
 
-console.log("Watching for file changes.");
+function onError() {
+  console.log("Error detected. Waiting for changes...");
+}
 
-await watcher(".", (event) => {
+let process = runAndWatchErrors(Deno.args, onError);
+
+console.log("Process is started. Watching for changes...");
+
+await watchChanges(".", (event) => {
   console.log("File change detected.");
   console.log(event.paths);
+  process = runAndWatchErrors(Deno.args, onError, process);
+  setTimeout(() => console.log("Watching for changes..."), 2500);
 });
