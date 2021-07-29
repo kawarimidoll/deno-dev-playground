@@ -1,17 +1,18 @@
 import { watchChanges } from "./watcher.ts";
 import { runAndWatchErrors } from "./runner.ts";
+import { fail, load, success, update } from "./colored_log.ts";
 
 function onError() {
-  console.log("Error detected. Waiting for changes...");
+  fail("Error detected. Waiting for changes...");
 }
 
 let process = runAndWatchErrors(Deno.args, onError);
 
-console.log("Process is started. Watching for changes...");
+load("Process is started. Watching for changes...");
 
 await watchChanges(".", (event) => {
-  console.log("File change detected.");
-  console.log(event.paths);
+  success("File change detected.");
+  update(event.paths[0]);
   process = runAndWatchErrors(Deno.args, onError, process);
-  setTimeout(() => console.log("Watching for changes..."), 2500);
+  setTimeout(() => success("Watching for changes..."), 2500);
 });

@@ -1,3 +1,5 @@
+import { fail } from "./colored_log.ts";
+
 function denoRun(cmd: string[], currentProcess?: Deno.Process) {
   if (currentProcess) {
     currentProcess.close();
@@ -15,7 +17,7 @@ async function watchProcessError(process: Deno.Process, onError: VoidFunction) {
       onError();
     }
   } catch (error) {
-    console.warn(error);
+    fail(error);
   }
 }
 
