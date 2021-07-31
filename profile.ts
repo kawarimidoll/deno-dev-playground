@@ -9,9 +9,26 @@ const css = (cssObject: Record<string, Record<string, unknown>>) =>
 
 const title = "kawarimidoll";
 const styles = css({
-  "body": { display: "flex", "justify-content": "center" },
+  body: { display: "flex", "justify-content": "center" },
+  "#main": { padding: "0.5rem 2rem" },
   ".avatar": { "border-radius": "50%" },
+  ".list-item": {
+    "border-radius": "5px",
+    "border-style": "solid",
+    "border-width": "thin",
+    margin: "0.5rem",
+    padding: "0.5rem 2rem",
+  },
 });
+
+const iconText = (icon: string, text: string, href?: string) =>
+  h(
+    "div",
+    { class: "list-item" },
+    h("img", { src: `https://icongr.am/${icon}.svg?size=18` }),
+    NBSP,
+    href ? h("a", { href }, text) : text,
+  );
 
 const html = "<!DOCTYPE html>" +
   h(
@@ -21,27 +38,6 @@ const html = "<!DOCTYPE html>" +
       h("meta", { charset: "utf-8" }),
       h("title", title),
       h("style", styles),
-      h("link", {
-        rel: "stylesheet",
-        href:
-          "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css",
-        integrity:
-          "sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==",
-        crossorigin: "anonymous",
-        referrerpolicy: "no-referrer",
-      }),
-      // h("link", {
-      //   href:
-      //     "https://cdn.jsdelivr.net/gh/lucaburgio/iconoir@4.4/css/iconoir.css",
-      //   rel: "stylesheet",
-      //   type: "text/css",
-      // }),
-      h("link", {
-        href:
-          "https://cdn.jsdelivr.net/gh/devicons/devicon@v2.12.0/devicon.min.css",
-        rel: "stylesheet",
-        type: "text/css",
-      }),
       h("link", {
         rel: "icon",
         type: "image/svg+xml",
@@ -55,141 +51,53 @@ const html = "<!DOCTYPE html>" +
         "div",
         { id: "main" },
         h("img", {
-          style: "height:auto;",
+          style: "height:auto;display:block;margin:0 auto",
           alt: "avatar",
           width: "260",
           height: "260",
           class: "avatar",
           src: "https://avatars.githubusercontent.com/u/8146876?v=4",
         }),
-        h("h1", "kawarimidoll"),
+        h("h1", { style: "text-align:center" }, "kawarimidoll"),
         h("hr"),
         h("h2", "I am..."),
-        h(
-          "div",
-          h("img", { src: "https://icongr.am/feather/cpu.svg?size=18" }),
-          NBSP,
-          "Software developer",
-        ),
-        h(
-          "div",
-          h("img", { src: "https://icongr.am/feather/scissors.svg?size=18" }),
-          NBSP,
-          "Yak shaver",
-        ),
-        h(
-          "div",
-          h("img", { src: "https://icongr.am/feather/life-buoy.svg?size=18" }),
-          NBSP,
-          "Wheel reinventor",
-        ),
-        h(
-          "div",
-          h("img", { src: "https://icongr.am/feather/triangle.svg?size=18" }),
-          NBSP,
-          "Indoor climber",
-        ),
-        h(
-          "div",
-          h("img", {
-            src: "https://icongr.am/feather/trending-up.svg?size=18",
-          }),
-          NBSP,
-          "Long-term investor",
-        ),
-        h(
-          "div",
-          h("img", { src: "https://icongr.am/feather/map-pin.svg?size=18" }),
-          NBSP,
-          "in the Room 101, Japan",
-        ),
+        iconText("feather/cpu", "Software developer"),
+        iconText("feather/scissors", "Yak shaver"),
+        iconText("feather/life-buoy", "Wheel reinventor"),
+        iconText("feather/triangle", "Indoor climber"),
+        iconText("feather/trending-up", "Long-term investor"),
+        iconText("feather/map-pin", "in the Room 101, Japan"),
         h("hr"),
         h("h2", "I am using..."),
-        h(
-          "div",
-          h("img", { src: "https://icongr.am/feather/monitor.svg?size=18" }),
-          NBSP,
-          "macOS",
-        ),
-        h(
-          "div",
-          h("img", { src: "https://icongr.am/feather/smartphone.svg?size=18" }),
-          NBSP,
-          "iPhone",
-        ),
-        h(
-          "div",
-          h("img", { src: "https://icongr.am/feather/terminal.svg?size=18" }),
-          NBSP,
-          "Neovim",
-        ),
-        h(
-          "div",
-          h("img", { src: "https://icongr.am/feather/heart.svg?size=18" }),
-          NBSP,
-          "Deno",
-        ),
+        iconText("feather/monitor", "macOS"),
+        iconText("feather/smartphone", "iPhone"),
+        iconText("feather/terminal", "Neovim"),
+        iconText("feather/heart", "Deno"),
         h("hr"),
         h("h2", "links"),
-        h(
-          "div",
-          h("img", { src: "https://icongr.am/feather/twitter.svg?size=18" }),
-          NBSP,
-          h("a", { href: "https://twitter.com/kawarimidoll" }, "Twitter"),
+        iconText(
+          "feather/twitter",
+          "Twitter",
+          "https://twitter.com/kawarimidoll",
         ),
-        h(
-          "div",
-          h("img", { src: "https://icongr.am/feather/github.svg?size=18" }),
-          NBSP,
-          h("a", { href: "https://github.com/kawarimidoll" }, "GitHub"),
+        iconText("feather/github", "GitHub", "https://github.com/kawarimidoll"),
+        iconText("feather/grid", "Pixela", "https://pixe.la/@kawarimidoll"),
+        iconText("feather/book", "Zenn", "https://zenn.dev/kawarimidoll"),
+        iconText("feather/search", "Qiita", "https://qiita.com/kawarimidoll"),
+        iconText(
+          "feather/coffee",
+          "Buy me a coffee",
+          "https://www.buymeacoffee.com/kawarimidoll",
         ),
-        h(
-          "div",
-          h("img", { src: "https://icongr.am/feather/grid.svg?size=18" }),
-          NBSP,
-          h("a", { href: "https://pixe.la/@kawarimidoll" }, "Pixela"),
+        iconText(
+          "feather/gitlab",
+          "GitLab [stale]",
+          "https://gitlab.com/kawarimidoll",
         ),
-        h(
-          "div",
-          h("img", { src: "https://icongr.am/feather/book.svg?size=18" }),
-          NBSP,
-          h("a", { href: "https://zenn.dev/kawarimidoll" }, "Zenn"),
-        ),
-        h(
-          "div",
-          h("img", { src: "https://icongr.am/feather/search.svg?size=18" }),
-          NBSP,
-          h("a", { href: "https://qiita.com/kawarimidoll" }, "Qiita"),
-        ),
-        h(
-          "div",
-          h("img", { src: "https://icongr.am/feather/coffee.svg?size=18" }),
-          NBSP,
-          h(
-            "a",
-            { href: "https://www.buymeacoffee.com/kawarimidoll" },
-            "Buy me a coffee",
-          ),
-        ),
-        h(
-          "div",
-          h("img", { src: "https://icongr.am/feather/gitlab.svg?size=18" }),
-          NBSP,
-          h(
-            "a",
-            { href: "https://gitlab.com/kawarimidoll" },
-            "GitLab [stale]",
-          ),
-        ),
-        h(
-          "div",
-          h("img", { src: "https://icongr.am/feather/package.svg?size=18" }),
-          NBSP,
-          h(
-            "a",
-            { href: "https://www.npmjs.com/~kawarimidoll" },
-            "npm [stale]",
-          ),
+        iconText(
+          "feather/package",
+          "npm [stale]",
+          "https://www.npmjs.com/~kawarimidoll",
         ),
       ),
     ),
