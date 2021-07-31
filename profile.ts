@@ -53,7 +53,12 @@ const styles = css({
 });
 
 const icongram = (name: string, size = 20) =>
-  h("img", { src: `https://icongr.am/${name}.svg?size=${size}`, alt: name });
+  h("img", {
+    src: `https://icongr.am/${
+      name.replace(/(^[^\/]*$)/, "feather/$1")
+    }.svg?size=${size}`,
+    alt: name,
+  });
 
 const iconText = (icon: string, text: string) =>
   h(
@@ -112,78 +117,78 @@ const html = "<!DOCTYPE html>" +
           h(
             "div",
             { class: "nav" },
-            h("a", { href: "#profiles" }, icongram("feather/smile", 26)),
-            h("a", { href: "#tools" }, icongram("feather/tool", 26)),
-            h("a", { href: "#links" }, icongram("feather/link", 26)),
-            h("a", { href: "#supports" }, icongram("feather/gift", 26)),
+            h("a", { href: "#profiles" }, icongram("smile", 26)),
+            h("a", { href: "#tools" }, icongram("tool", 26)),
+            h("a", { href: "#links" }, icongram("link", 26)),
+            h("a", { href: "#supports" }, icongram("gift", 26)),
           ),
         ),
         h(
           "div",
           { class: "list-group" },
-          h("h2", { id: "profiles" }, icongram("feather/smile", 40)),
-          iconText("feather/cpu", "Software developer"),
-          iconText("feather/scissors", "Yak shaver"),
-          iconText("feather/life-buoy", "Wheel reinventor"),
-          iconText("feather/triangle", "Indoor climber"),
-          iconText("feather/trending-up", "Long-term investor"),
-          iconText("feather/map-pin", "Room 101, Japan"),
-          h("h2", { id: "tools" }, icongram("feather/tool", 40)),
-          iconText("feather/monitor", "macOS"),
-          iconText("feather/smartphone", "iPhone"),
-          iconText("feather/terminal", "Neovim"),
-          iconText("feather/heart", "Deno"),
-          h("h2", { id: "links" }, icongram("feather/link", 40)),
+          h("h2", { id: "profiles" }, icongram("smile", 40)),
+          iconText("cpu", "Software developer"),
+          iconText("scissors", "Yak shaver"),
+          iconText("life-buoy", "Wheel reinventor"),
+          iconText("triangle", "Indoor climber"),
+          iconText("trending-up", "Long-term investor"),
+          iconText("map-pin", "Room 101, Japan"),
+          h("h2", { id: "tools" }, icongram("tool", 40)),
+          iconText("monitor", "macOS"),
+          iconText("smartphone", "iPhone"),
+          iconText("simple/neovim", "Neovim"),
+          iconText("simple/deno", "Deno"),
+          h("h2", { id: "links" }, icongram("link", 40)),
           iconLink(
-            "feather/twitter",
+            "twitter",
             "Twitter",
             "https://twitter.com/kawarimidoll",
           ),
           iconLink(
-            "feather/github",
+            "github",
             "GitHub",
             "https://github.com/kawarimidoll",
           ),
-          iconLink("feather/grid", "Pixela", "https://pixe.la/@kawarimidoll"),
-          iconLink("feather/book", "Zenn", "https://zenn.dev/kawarimidoll"),
+          iconLink("grid", "Pixela", "https://pixe.la/@kawarimidoll"),
+          iconLink("book", "Zenn", "https://zenn.dev/kawarimidoll"),
           iconLink(
-            "feather/search",
+            "search",
             "Qiita",
             "https://qiita.com/kawarimidoll",
           ),
           iconLink(
-            "feather/coffee",
+            "coffee",
             "Buy me a coffee",
             "https://www.buymeacoffee.com/kawarimidoll",
           ),
           iconLink(
-            "feather/globe",
+            "globe",
             "My site [under construction]",
             "https://kawarimidoll.com",
           ),
           iconLink(
-            "feather/gitlab",
+            "gitlab",
             "GitLab [stale]",
             "https://gitlab.com/kawarimidoll",
           ),
           iconLink(
-            "feather/package",
+            "package",
             "npm [stale]",
             "https://www.npmjs.com/~kawarimidoll",
           ),
-          h("h2", { id: "supports" }, icongram("feather/gift", 40)),
+          h("h2", { id: "supports" }, icongram("gift", 40)),
           iconLink(
-            "feather/truck",
+            "simple/ubereats",
             "Uber Eats promotion code: eats-2j5di9k7b0",
             "https://ubereats.com/feed?promoCode=eats-2j5di9k7b0",
           ),
           iconLink(
-            "feather/dollar-sign",
+            "dollar-sign",
             "Moppy invitation code: rUK7e101",
             "https://pc.moppy.jp/entry/invite.php?invite=rUK7e101",
           ),
           iconLink(
-            "feather/shopping-bag",
+            "shopping-bag",
             "Rakuma invitation code: GHMt4",
             "https://fril.jp/download",
           ),
