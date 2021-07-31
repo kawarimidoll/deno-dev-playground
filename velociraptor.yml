@@ -16,6 +16,11 @@ scripts:
     unstable: true
   promote_zenn_article:
     cmd: promote_zenn_article.ts
+  profile:
+    desc: Starts profile server
+    cmd: profile.ts
+    unstable: true
+    watch: true
   # test: deno test
   lint: deno lint
   format: deno fmt
