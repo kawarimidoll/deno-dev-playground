@@ -9,10 +9,19 @@ const css = (cssObject: Record<string, Record<string, unknown>>) =>
 
 const title = "kawarimidoll";
 const styles = css({
-  body: { display: "flex", "justify-content": "center", margin: "0" },
+  body: {
+    display: "flex",
+    "justify-content": "center",
+    margin: "0",
+    "text-align": "center",
+    "scroll-behavior": "smooth",
+  },
   a: { "text-decoration": "none" },
-  "h1,h2": { "text-align": "center" },
-  h2: { "margin-block-start": "2rem", "margin-block-end": "0" },
+  h2: {
+    "margin-block-start": "-2rem",
+    "margin-block-end": "0",
+    "padding-top": "4rem",
+  },
   img: { display: "block", margin: "0 auto" },
   "#main": { width: "100%", "max-width": "800px", padding: "1rem 0.5rem" },
   ".avatar": { "border-radius": "50%", height: "auto" },
@@ -24,12 +33,19 @@ const styles = css({
     margin: "0.5rem auto",
     padding: "0.5rem 2rem",
   },
+  ".nav-box": {
+    "background-color": "#fff",
+    position: "sticky",
+    top: "0",
+    "border-bottom": "1px solid #222",
+  },
   ".nav": {
     display: "flex",
     "justify-content": "space-around",
-    width: "60%",
     margin: "0 auto",
-    "max-width": "500px",
+    padding: "0.5rem",
+    width: "100%",
+    "max-width": "300px",
   },
   ".nav>a": {
     display: "block",
@@ -83,12 +99,25 @@ const html = "<!DOCTYPE html>" +
         h("h1", "kawarimidoll"),
         h(
           "div",
-          { class: "nav" },
-          h("a", { href: "#profiles" }, icongram("feather/smile", 26)),
-          h("a", { href: "#tools" }, icongram("feather/tool", 26)),
-          h("a", { href: "#links" }, icongram("feather/link", 26)),
+          { style: "margin-bottom:2rem" },
+          "Aim to be a hacker and a painter.",
         ),
-        h("hr"),
+        h(
+          "div",
+          "Click to jump...",
+        ),
+        h(
+          "div",
+          { class: "nav-box" },
+          h(
+            "div",
+            { class: "nav" },
+            h("a", { href: "#profiles" }, icongram("feather/smile", 26)),
+            h("a", { href: "#tools" }, icongram("feather/tool", 26)),
+            h("a", { href: "#links" }, icongram("feather/link", 26)),
+            h("a", { href: "#supports" }, icongram("feather/gift", 26)),
+          ),
+        ),
         h(
           "div",
           { class: "list-group" },
