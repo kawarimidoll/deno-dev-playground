@@ -128,6 +128,11 @@ const html = "<!DOCTYPE html>" +
             "https://www.buymeacoffee.com/kawarimidoll",
           ),
           iconLink(
+            "feather/globe",
+            "My site [under construction]",
+            "https://kawarimidoll.com",
+          ),
+          iconLink(
             "feather/gitlab",
             "GitLab [stale]",
             "https://gitlab.com/kawarimidoll",
@@ -136,6 +141,22 @@ const html = "<!DOCTYPE html>" +
             "feather/package",
             "npm [stale]",
             "https://www.npmjs.com/~kawarimidoll",
+          ),
+          h("h2", { id: "supports" }, icongram("feather/gift", 40)),
+          iconLink(
+            "feather/truck",
+            "Uber Eats promotion code: eats-2j5di9k7b0",
+            "https://ubereats.com/feed?promoCode=eats-2j5di9k7b0",
+          ),
+          iconLink(
+            "feather/dollar-sign",
+            "Moppy invitation code: rUK7e101",
+            "https://pc.moppy.jp/entry/invite.php?invite=rUK7e101",
+          ),
+          iconLink(
+            "feather/shopping-bag",
+            "Rakuma invitation code: GHMt4",
+            "https://fril.jp/download",
           ),
         ),
       ),
