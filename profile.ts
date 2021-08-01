@@ -1,6 +1,7 @@
 import { tag as h } from "https://deno.land/x/markup_tag@0.1.2/mod.ts";
 import { serve } from "https://deno.land/std@0.103.0/http/server.ts";
 import { createDeploySource } from "./create_deploy_source.ts";
+import { parse as parseYAML } from "https://deno.land/std@0.103.0/encoding/yaml.ts";
 
 const css = (cssObject: Record<string, Record<string, unknown>>) =>
   Object.entries(cssObject).map(([selector, attributes]) =>
@@ -9,10 +10,33 @@ const css = (cssObject: Record<string, Record<string, unknown>>) =>
     "}"
   ).join("");
 
+interface ListGroup {
+  icon: string;
+  items: ListItem[];
+}
+interface ListItem {
+  text: string;
+  icon: string;
+  url?: string;
+}
+interface ProfileConfiguration {
+  name: string;
+  bio: string;
+  avatar: string;
+  favicon: string;
+  list: {
+    [key: string]: ListGroup;
+  };
+}
+const {
+  name,
+  bio,
+  avatar,
+  favicon,
+  list,
+} = parseYAML(Deno.readTextFileSync("./config.yml")) as ProfileConfiguration;
+
 const title = "kawarimidoll profile";
-const avatarURL = "https://avatars.githubusercontent.com/u/8146876?v=4";
-const faviconURL =
-  "https://raw.githubusercontent.com/kawarimidoll/kawarimidoll/master/assets/kawarimi_chip_icon.svg";
 const styles = css({
   body: {
     display: "flex",
@@ -30,7 +54,7 @@ const styles = css({
   },
   img: { display: "block", margin: "0 auto" },
   "#main": { width: "100%", "max-width": "800px", padding: "1rem 0.5rem" },
-  ".avatar": { "border-radius": "50%", height: "auto" },
+  ".avatar": { "border-radius": "50%", width: "260px", height: "auto" },
   ".list-group": { "max-width": "500px", margin: "0 auto" },
   ".list-item": {
     "border-radius": "5px",
@@ -97,30 +121,21 @@ const html = "<!DOCTYPE html>" +
       h("meta", { property: "og:title", content: title }),
       h("meta", { property: "og:description", content: "About kawarimidoll" }),
       h("meta", { property: "og:site_name", content: title }),
-      h("meta", { property: "og:image", content: avatarURL }),
+      h("meta", { property: "og:image", content: avatar }),
       h("meta", { name: "twitter:card", content: "summary" }),
       h("meta", { name: "twitter:site", content: "@kawarimidoll" }),
       h("title", title),
       h("style", styles),
-      h("link", { rel: "icon", type: "image/svg+xml", href: faviconURL }),
+      h("link", { rel: "icon", type: "image/svg+xml", href: favicon }),
     ),
     h(
       "body",
       h(
         "div",
         { id: "main" },
-        h("img", {
-          alt: "avatar",
-          width: "260",
-          class: "avatar",
-          src: avatarURL,
-        }),
-        h("h1", "kawarimidoll"),
-        h(
-          "div",
-          { style: "margin-bottom:2rem" },
-          "Aim to be a hacker and a painter.",
-        ),
+        h("img", { alt: "avatar", class: "avatar", src: avatar }),
+        h("h1", name),
+        h("div", { style: "margin-bottom:2rem" }, bio),
         h("div", "Click to jump..."),
         h(
           "div",
@@ -128,88 +143,30 @@ const html = "<!DOCTYPE html>" +
           h(
             "div",
             { class: "nav" },
-            h("a", { href: "#profiles" }, icongram("smile", 26)),
-            h("a", { href: "#tools" }, icongram("tool", 26)),
-            h("a", { href: "#links" }, icongram("link", 26)),
-            h("a", { href: "#supports" }, icongram("gift", 26)),
+            ...Object.entries(list).map(([id, listGroup]) => {
+              return h("a", { href: `#${id}` }, icongram(listGroup.icon, 26));
+            }),
           ),
         ),
         h(
           "div",
           { class: "list-group" },
-          h("h2", { id: "profiles" }, icongram("smile", 40)),
-          iconText("cpu", "Software developer"),
-          iconText("scissors", "Yak shaver"),
-          iconText("life-buoy", "Wheel reinventor"),
-          iconText("triangle", "Indoor climber"),
-          iconText("trending-up", "Long-term investor"),
-          iconText("map-pin", "Room 101, Japan"),
-          h("h2", { id: "tools" }, icongram("tool", 40)),
-          iconText("monitor", "macOS"),
-          iconText("smartphone", "iPhone"),
-          iconText("simple/neovim", "Neovim"),
-          iconText("simple/deno", "Deno"),
-          h("h2", { id: "links" }, icongram("link", 40)),
-          iconLink(
-            "twitter",
-            "Twitter",
-            "https://twitter.com/kawarimidoll",
-          ),
-          iconLink(
-            "github",
-            "GitHub",
-            "https://github.com/kawarimidoll",
-          ),
-          iconLink("grid", "Pixela", "https://pixe.la/@kawarimidoll"),
-          iconLink("book", "Zenn", "https://zenn.dev/kawarimidoll"),
-          iconLink(
-            "search",
-            "Qiita",
-            "https://qiita.com/kawarimidoll",
-          ),
-          iconLink(
-            "coffee",
-            "Buy me a coffee",
-            "https://www.buymeacoffee.com/kawarimidoll",
-          ),
-          iconLink(
-            "globe",
-            "My site [under construction]",
-            "https://kawarimidoll.com",
-          ),
-          iconLink(
-            "gitlab",
-            "GitLab [stale]",
-            "https://gitlab.com/kawarimidoll",
-          ),
-          iconLink(
-            "package",
-            "npm [stale]",
-            "https://www.npmjs.com/~kawarimidoll",
-          ),
-          h("h2", { id: "supports" }, icongram("gift", 40)),
-          iconLink(
-            "simple/ubereats",
-            "Uber Eats promotion code: eats-2j5di9k7b0",
-            "https://ubereats.com/feed?promoCode=eats-2j5di9k7b0",
-          ),
-          iconLink(
-            "dollar-sign",
-            "Moppy invitation code: rUK7e101",
-            "https://pc.moppy.jp/entry/invite.php?invite=rUK7e101",
-          ),
-          iconLink(
-            "shopping-bag",
-            "Rakuma invitation code: GHMt4",
-            "https://fril.jp/download",
-          ),
+          ...Object.entries(list).map(([id, listGroup]) => {
+            const { icon, items } = listGroup;
+            return h("h2", { id }, icongram(icon, 40)) +
+              items.map((listItem) =>
+                listItem.url
+                  ? iconLink(listItem.icon, listItem.text, listItem.url)
+                  : iconText(listItem.icon, listItem.text)
+              ).join("");
+          }),
         ),
       ),
     ),
   );
 
 if (Deno.args.includes("--build") || Deno.args.includes("-b")) {
-  await Deno.writeTextFile("./server.js", createDeploySource(html));
+  Deno.writeTextFileSync("./server.js", createDeploySource(html));
   Deno.exit(0);
 }
 
