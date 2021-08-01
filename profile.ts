@@ -1,7 +1,6 @@
 import { tag as h } from "https://deno.land/x/markup_tag@0.1.2/mod.ts";
 import { serve } from "https://deno.land/std@0.103.0/http/server.ts";
-import { ensureDir } from "https://deno.land/std@0.103.0/fs/mod.ts";
-import { main as deployDir } from "https://deno.land/x/deploy_dir@v0.3.2/cli.ts";
+import { createDeploySource } from "./create_deploy_source.ts";
 
 const css = (cssObject: Record<string, Record<string, unknown>>) =>
   Object.entries(cssObject).map(([selector, attributes]) =>
@@ -210,9 +209,7 @@ const html = "<!DOCTYPE html>" +
   );
 
 if (Deno.args.includes("--build") || Deno.args.includes("-b")) {
-  await ensureDir("./build");
-  await Deno.writeTextFile("./build/index.html", html);
-  await deployDir(["build", "-y", "-o", "server.js"]);
+  await Deno.writeTextFile("./server.js", createDeploySource(html));
   Deno.exit(0);
 }
 
