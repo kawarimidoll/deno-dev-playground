@@ -21,9 +21,9 @@ interface ListItem {
 }
 interface ProfileConfiguration {
   name: string;
-  bio: string;
+  bio?: string;
   avatar: string;
-  favicon: string;
+  favicon?: string;
   list: {
     [key: string]: ListGroup;
   };
@@ -35,6 +35,10 @@ const {
   favicon,
   list,
 } = parseYAML(Deno.readTextFileSync("./config.yml")) as ProfileConfiguration;
+
+if (Object.keys(list).length === 0) {
+  throw new Error("list item is empty");
+}
 
 const title = "kawarimidoll profile";
 const styles = css({
@@ -94,13 +98,17 @@ const icongram = (name: string, size = 20, attrs = {}) =>
     ...attrs,
   });
 
-const exLink = icongram("external-link", 12, { class: "inline" });
+const renderListItem = (listItem: ListItem) => {
+  const exLink = icongram("external-link", 12, { class: "inline" });
+  const { icon, text, url: href } = listItem;
 
-const iconText = (icon: string, text: string) =>
-  h("div", { class: "list-item" }, icongram(icon), h("div", text));
+  const iconText = (icon: string, text: string) =>
+    h("div", { class: "list-item" }, icongram(icon), h("div", text));
 
-const iconLink = (icon: string, text: string, href: string) =>
-  h("a", { href }, iconText(icon, text + " " + exLink));
+  return href
+    ? h("a", { href }, iconText(icon, text + " " + exLink))
+    : iconText(icon, text);
+};
 
 const html = "<!DOCTYPE html>" +
   h(
@@ -126,7 +134,7 @@ const html = "<!DOCTYPE html>" +
       h("meta", { name: "twitter:site", content: "@kawarimidoll" }),
       h("title", title),
       h("style", styles),
-      h("link", { rel: "icon", type: "image/svg+xml", href: favicon }),
+      favicon ? h("link", { rel: "icon", href: favicon }) : "",
     ),
     h(
       "body",
@@ -135,7 +143,7 @@ const html = "<!DOCTYPE html>" +
         { id: "main" },
         h("img", { alt: "avatar", class: "avatar", src: avatar }),
         h("h1", name),
-        h("div", { style: "margin-bottom:2rem" }, bio),
+        bio ? h("div", { style: "margin-bottom:2rem" }, bio) : "",
         h("div", "Click to jump..."),
         h(
           "div",
@@ -154,11 +162,7 @@ const html = "<!DOCTYPE html>" +
           ...Object.entries(list).map(([id, listGroup]) => {
             const { icon, items } = listGroup;
             return h("h2", { id }, icongram(icon, 40)) +
-              items.map((listItem) =>
-                listItem.url
-                  ? iconLink(listItem.icon, listItem.text, listItem.url)
-                  : iconText(listItem.icon, listItem.text)
-              ).join("");
+              items.map((listItem) => renderListItem(listItem)).join("");
           }),
         ),
       ),
