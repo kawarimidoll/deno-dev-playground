@@ -1,4 +1,5 @@
 import { tag as h } from "https://deno.land/x/markup_tag@0.1.2/mod.ts";
+import { serve } from "https://deno.land/std@0.103.0/http/server.ts";
 import { ensureDir } from "https://deno.land/std@0.103.0/fs/mod.ts";
 import { main as deployDir } from "https://deno.land/x/deploy_dir@v0.3.2/cli.ts";
 
@@ -22,7 +23,7 @@ const styles = css({
     "scroll-behavior": "smooth",
     "font-family": "sans-serif,monospace",
   },
-  a: { "text-decoration": "none" },
+  a: { "text-decoration": "none", color: "inherit" },
   h2: {
     "margin-block-start": "-2rem",
     "margin-block-end": "0",
@@ -56,21 +57,27 @@ const styles = css({
   ".nav>a": {
     display: "block",
   },
+  ".inline": {
+    display: "inline",
+  },
 });
 
-const icongram = (name: string, size = 20) =>
+const icongram = (name: string, size = 20, attrs = {}) =>
   h("img", {
     src: `https://icongr.am/${
       name.replace(/(^[^\/]*$)/, "feather/$1")
     }.svg?size=${size}`,
     alt: name,
+    ...attrs,
   });
+
+const exLink = icongram("external-link", 12, { class: "inline" });
 
 const iconText = (icon: string, text: string) =>
   h("div", { class: "list-item" }, icongram(icon), h("div", text));
 
 const iconLink = (icon: string, text: string, href: string) =>
-  h("a", { href }, iconText(icon, text));
+  h("a", { href }, iconText(icon, text + " " + exLink));
 
 const html = "<!DOCTYPE html>" +
   h(
@@ -210,18 +217,9 @@ if (Deno.args.includes("--build") || Deno.args.includes("-b")) {
 }
 
 const port = 8080;
-const server = Deno.listen({ port });
+const server = serve({ port });
 console.log(`HTTP webserver running. Access it at: http://localhost:${port}/`);
-for await (const conn of server) {
-  (async () => {
-    const httpConn = Deno.serveHttp(conn);
-    for await (const requestEvent of httpConn) {
-      requestEvent.respondWith(
-        new Response(html, {
-          status: 200,
-          headers: { "content-type": "text/html" },
-        }),
-      );
-    }
-  })();
+for await (const request of server) {
+  const headers = new Headers({ "content-type": "text/html" });
+  request.respond({ status: 200, body: html, headers });
 }
