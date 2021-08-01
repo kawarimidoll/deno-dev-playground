@@ -1,0 +1,73 @@
+name: kawarimidoll
+bio: Aim to be a hacker and a painter.
+avatar: "https://avatars.githubusercontent.com/u/8146876?v=4"
+favicon: "https://bit.ly/kawarimi_chip_icon"
+list:
+  profiles:
+    icon: smile
+    items:
+      - icon: cpu
+        text: Software developer
+      - icon: scissors
+        text: Yak shaver
+      - icon: life-buoy
+        text: Wheel reinventor
+      - icon: triangle
+        text: Indoor climber
+      - icon: trending-up
+        text: Long-term investor
+      - icon: map-pin
+        text: "Room 101, Japan"
+  tools:
+    icon: tool
+    items:
+      - icon: monitor
+        text: macOS
+      - icon: smartphone
+        text: iPhone
+      - icon: simple/neovim
+        text: Neovim
+      - icon: simple/deno
+        text: Deno
+  links:
+    icon: link
+    items:
+      - icon: twitter
+        text: Twitter
+        url: "https://twitter.com/kawarimidoll"
+      - icon: github
+        text: GitHub
+        url: "https://github.com/kawarimidoll"
+      - icon: grid
+        text: Pixela
+        url: "https://pixe.la/@kawarimidoll"
+      - icon: book
+        text: Zenn
+        url: "https://zenn.dev/kawarimidoll"
+      - icon: search
+        text: Qiita
+        url: "https://qiita.com/kawarimidoll"
+      - icon: coffee
+        text: Buy me a coffee
+        url: "https://www.buymeacoffee.com/kawarimidoll"
+      - icon: globe
+        text: "My site [under construction]"
+        url: "https://kawarimidoll.com"
+      - icon: gitlab
+        text: "GitLab [stale]"
+        url: "https://gitlab.com/kawarimidoll"
+      - icon: package
+        text: "npm [stale]"
+        url: "https://www.npmjs.com/~kawarimidoll"
+  supports:
+    icon: gift
+    items:
+      - icon: simple/ubereats
+        text: "Uber Eats promotion code: eats-2j5di9k7b0"
+        url: "https://ubereats.com/feed?promoCode=eats-2j5di9k7b0"
+      - icon: dollar-sign
+        text: "Moppy invitation code: rUK7e101"
+        url: "https://pc.moppy.jp/entry/invite.php?invite=rUK7e101"
+      - icon: shopping-bag
+        text: "Rakuma invitation code: GHMt4"
+        url: "https://fril.jp/download"
