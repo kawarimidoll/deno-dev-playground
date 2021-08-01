@@ -1,4 +1,6 @@
 import { tag as h } from "https://deno.land/x/markup_tag@0.1.2/mod.ts";
+import { ensureDir } from "https://deno.land/std@0.103.0/fs/mod.ts";
+import { main as deployDir } from "https://deno.land/x/deploy_dir@v0.3.2/cli.ts";
 
 const css = (cssObject: Record<string, Record<string, unknown>>) =>
   Object.entries(cssObject).map(([selector, attributes]) =>
@@ -7,7 +9,10 @@ const css = (cssObject: Record<string, Record<string, unknown>>) =>
     "}"
   ).join("");
 
-const title = "kawarimidoll";
+const title = "kawarimidoll profile";
+const avatarURL = "https://avatars.githubusercontent.com/u/8146876?v=4";
+const faviconURL =
+  "https://raw.githubusercontent.com/kawarimidoll/kawarimidoll/master/assets/kawarimi_chip_icon.svg";
 const styles = css({
   body: {
     display: "flex",
@@ -15,6 +20,7 @@ const styles = css({
     margin: "0",
     "text-align": "center",
     "scroll-behavior": "smooth",
+    "font-family": "sans-serif,monospace",
   },
   a: { "text-decoration": "none" },
   h2: {
@@ -61,12 +67,7 @@ const icongram = (name: string, size = 20) =>
   });
 
 const iconText = (icon: string, text: string) =>
-  h(
-    "div",
-    { class: "list-item" },
-    icongram(icon),
-    h("div", { style: "margin:0 auto;text-align:center" }, text),
-  );
+  h("div", { class: "list-item" }, icongram(icon), h("div", text));
 
 const iconLink = (icon: string, text: string, href: string) =>
   h("a", { href }, iconText(icon, text));
@@ -76,19 +77,26 @@ const html = "<!DOCTYPE html>" +
     "html",
     h(
       "head",
+      { prefix: "og:http://ogp.me/ns#" },
       h("meta", { charset: "utf-8" }),
       h("meta", {
         name: "viewport",
         content: "width=device-width,initial-scale=1.0",
       }),
+      h("meta", {
+        property: "og:url",
+        content: "https://kawarimidoll.deno.dev",
+      }),
+      h("meta", { property: "og:type", content: "website" }),
+      h("meta", { property: "og:title", content: title }),
+      h("meta", { property: "og:description", content: "About kawarimidoll" }),
+      h("meta", { property: "og:site_name", content: title }),
+      h("meta", { property: "og:image", content: avatarURL }),
+      h("meta", { name: "twitter:card", content: "summary" }),
+      h("meta", { name: "twitter:site", content: "@kawarimidoll" }),
       h("title", title),
       h("style", styles),
-      h("link", {
-        rel: "icon",
-        type: "image/svg+xml",
-        href:
-          "https://raw.githubusercontent.com/kawarimidoll/kawarimidoll/master/assets/kawarimi_chip_icon.svg",
-      }),
+      h("link", { rel: "icon", type: "image/svg+xml", href: faviconURL }),
     ),
     h(
       "body",
@@ -99,7 +107,7 @@ const html = "<!DOCTYPE html>" +
           alt: "avatar",
           width: "260",
           class: "avatar",
-          src: "https://avatars.githubusercontent.com/u/8146876?v=4",
+          src: avatarURL,
         }),
         h("h1", "kawarimidoll"),
         h(
@@ -107,10 +115,7 @@ const html = "<!DOCTYPE html>" +
           { style: "margin-bottom:2rem" },
           "Aim to be a hacker and a painter.",
         ),
-        h(
-          "div",
-          "Click to jump...",
-        ),
+        h("div", "Click to jump..."),
         h(
           "div",
           { class: "nav-box" },
@@ -196,15 +201,13 @@ const html = "<!DOCTYPE html>" +
       ),
     ),
   );
-// await Deno.writeTextFile("index.html", html);
-// console.log("Done");
 
-// addEventListener("fetch", (event: FetchEvent) => {
-//   const response = new Response(html, {
-//     headers: { "content-type": "text/html" },
-//   });
-//   event.respondWith(response);
-// });
+if (Deno.args.includes("--build") || Deno.args.includes("-b")) {
+  await ensureDir("./build");
+  await Deno.writeTextFile("./build/index.html", html);
+  await deployDir(["build", "-y", "-o", "server.js"]);
+  Deno.exit(0);
+}
 
 const port = 8080;
 const server = Deno.listen({ port });
