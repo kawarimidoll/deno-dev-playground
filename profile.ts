@@ -82,14 +82,6 @@ const renderListItem = (listItem: ListItem) => {
 
 const rainCount = 30;
 const getRandomInt = (max: number) => Math.floor(Math.random() * max);
-const delays: CssObject = {};
-shuffle([...range(rainCount)]).forEach((num: number, idx) => {
-  delays[`.drop:nth-child(${idx})`] = {
-    "animation-delay": `${num * 50}ms`,
-    "animation-duration": `${getRandomInt(300) + 350}ms`,
-    opacity: `0.${getRandomInt(3) + 2}`,
-  };
-});
 
 const cssYml = `
 body:
@@ -164,8 +156,13 @@ img:
   animation-iteration-count: infinite
   margin-top: '-20vh'
   animation-timing-function: linear
-`;
-const styles = css(parseYaml(cssYml) as CssObject) + css(delays) +
+` + shuffle([...range(rainCount)]).map((num: number, idx) => `
+.drop:nth-child(${idx}):
+  animation-delay: ${num * 50}ms
+  animation-duration: ${getRandomInt(300) + 350}ms
+  opacity: 0.${getRandomInt(3) + 2}`).join("");
+
+const styles = css(parseYaml(cssYml) as CssObject) +
   `@keyframes falldown{to{margin-top:120vh}}`;
 
 const htmlHead = h(
