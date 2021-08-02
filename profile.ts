@@ -69,8 +69,8 @@ const icongram = (name: string, size = 20, attrs = {}) =>
     ...attrs,
   });
 
+const exLink = icongram("external-link", 12, { class: "inline" });
 const renderListItem = (listItem: ListItem) => {
-  const exLink = icongram("external-link", 12, { class: "inline" });
   const { icon, text, url: href } = listItem;
 
   const iconText = (icon: string, text: string) =>
@@ -88,8 +88,9 @@ const getRandomInt = (max: number) => Math.floor(Math.random() * max);
 const delays: CssObject = {};
 shuffle([...range(rainCount)]).forEach((num: number, idx) => {
   delays[`.drop:nth-child(${idx})`] = {
-    "animation-delay": `${num * 100}ms`,
-    "animation-duration": `${getRandomInt(250) + 375}ms`,
+    "animation-delay": `${num * 50}ms`,
+    "animation-duration": `${getRandomInt(300) + 350}ms`,
+    opacity: `0.${getRandomInt(3) + 2}`,
   };
 });
 
@@ -99,7 +100,7 @@ const rainStyle = css({
     "pointer-events": "none",
     "z-index": 1,
     position: "fixed",
-    width: "100%",
+    width: "120%",
     height: "100%",
     display: "flex",
     "justify-content": "space-around",
@@ -109,13 +110,13 @@ const rainStyle = css({
     width: "1px",
     height: "10vh",
     background: "#fff",
-    opacity: 0.4,
-    animation: "falldown 1s infinite",
+    "animation-name": "falldown",
+    "animation-iteration-count": "infinite",
     "margin-top": "-20vh",
     "animation-timing-function": "linear",
   },
 }) + css(delays) +
-  `@keyframes falldown{ to{ margin-top: 120vh } }`;
+  `@keyframes falldown{to{margin-top:120vh}}`;
 
 const htmlHead = h(
   "head",
@@ -169,7 +170,15 @@ const htmlBody = h(
           items.map((listItem) => renderListItem(listItem)).join("");
       }),
     ),
-    h("div", "Powered by deno deploy"),
+    h(
+      "div",
+      "Powered by ",
+      h("a", {
+        href: "https://deno.com/deploy",
+      }, "Deno Deploy"),
+      " ",
+      exLink,
+    ),
   ),
 );
 
