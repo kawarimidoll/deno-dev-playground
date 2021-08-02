@@ -5,9 +5,7 @@ import { parse as parseYaml } from "https://deno.land/std@0.103.0/encoding/yaml.
 import shuffle from "https://deno.land/x/shuffle@v1.0.0/mod.ts";
 import { range } from "https://deno.land/x/it_range@v1.0.2/mod.ts";
 
-interface CssObject {
-  [key: string]: { [key: string]: unknown };
-}
+type CssObject = Record<string, Record<string, unknown>>;
 const css = (cssObject: CssObject) =>
   Object.entries(cssObject).map(([selector, attributes]) =>
     selector + "{" +
@@ -15,18 +13,22 @@ const css = (cssObject: CssObject) =>
     "}"
   ).join("");
 
-interface ListGroup {
+// TODO: use disableFlags
+type disableFlag = "rain" | "nav";
+
+type ListGroup = {
   icon: string;
   items: ListItem[];
-}
-interface ListItem {
+};
+type ListItem = {
   text: string;
-  icon: string;
+  icon?: string;
   url?: string;
-}
-interface ProfileConfiguration {
+};
+type ProfileConfiguration = {
   name: string;
   projectName: string;
+  disable: disableFlag[];
   title?: string;
   bio?: string;
   avatar: string;
@@ -35,7 +37,7 @@ interface ProfileConfiguration {
   list: {
     [key: string]: ListGroup;
   };
-}
+};
 const {
   name,
   projectName,
@@ -72,8 +74,13 @@ const exLink = icongram("external-link", 12, { class: "inline" });
 const renderListItem = (listItem: ListItem) => {
   const { icon, text, url: href } = listItem;
 
-  const iconText = (icon: string, text: string) =>
-    h("div", { class: "list-item" }, icongram(icon), h("div", text));
+  const iconText = (icon = "", text = "") =>
+    h(
+      "div",
+      { class: "list-item" },
+      icon ? icongram(icon) : "",
+      h("div", text),
+    );
 
   return href
     ? h("a", { href }, iconText(icon, text + " " + exLink))
