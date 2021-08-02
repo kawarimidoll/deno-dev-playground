@@ -1,7 +1,7 @@
 import { tag as h } from "https://deno.land/x/markup_tag@0.1.2/mod.ts";
 import { serve } from "https://deno.land/std@0.103.0/http/server.ts";
 import { createDeploySource } from "./create_deploy_source.ts";
-import { parse as parseYAML } from "https://deno.land/std@0.103.0/encoding/yaml.ts";
+import { parse as parseYaml } from "https://deno.land/std@0.103.0/encoding/yaml.ts";
 
 const css = (cssObject: Record<string, Record<string, unknown>>) =>
   Object.entries(cssObject).map(([selector, attributes]) =>
@@ -21,26 +21,37 @@ interface ListItem {
 }
 interface ProfileConfiguration {
   name: string;
+  projectName: string;
+  title?: string;
   bio?: string;
   avatar: string;
   favicon?: string;
+  twitter?: string;
   list: {
     [key: string]: ListGroup;
   };
 }
 const {
   name,
+  projectName,
+  title: titleInConfig,
   bio,
   avatar,
   favicon,
+  twitter: twitterInConfig,
   list,
-} = parseYAML(Deno.readTextFileSync("./config.yml")) as ProfileConfiguration;
+} = parseYaml(Deno.readTextFileSync("./config.yml")) as ProfileConfiguration;
 
+// TODO: validate with custom schema
+if (!name || !projectName || !avatar || !list) {
+  throw new Error("missing required data");
+}
 if (Object.keys(list).length === 0) {
   throw new Error("list item is empty");
 }
 
-const title = "kawarimidoll profile";
+const title = titleInConfig || `${name} profile`;
+const twitter = (twitterInConfig || "").replace(/^([^@])/, "@$1");
 const styles = css({
   body: {
     display: "flex",
@@ -58,7 +69,12 @@ const styles = css({
   },
   img: { display: "block", margin: "0 auto" },
   "#main": { width: "100%", "max-width": "800px", padding: "1rem 0.5rem" },
-  ".avatar": { "border-radius": "50%", width: "260px", height: "auto" },
+  ".avatar": {
+    "border-radius": "50%",
+    width: "260px",
+    height: "260px",
+    "object-fit": "cover",
+  },
   ".list-group": { "max-width": "500px", margin: "0 auto" },
   ".list-item": {
     "border-radius": "5px",
@@ -123,15 +139,15 @@ const html = "<!DOCTYPE html>" +
       }),
       h("meta", {
         property: "og:url",
-        content: "https://kawarimidoll.deno.dev",
+        content: `https://${projectName}.deno.dev`,
       }),
       h("meta", { property: "og:type", content: "website" }),
       h("meta", { property: "og:title", content: title }),
-      h("meta", { property: "og:description", content: "About kawarimidoll" }),
+      h("meta", { property: "og:description", content: `About ${name}` }),
       h("meta", { property: "og:site_name", content: title }),
       h("meta", { property: "og:image", content: avatar }),
       h("meta", { name: "twitter:card", content: "summary" }),
-      h("meta", { name: "twitter:site", content: "@kawarimidoll" }),
+      twitter ? h("meta", { name: "twitter:site", content: twitter }) : "",
       h("title", title),
       h("style", styles),
       favicon ? h("link", { rel: "icon", href: favicon }) : "",
