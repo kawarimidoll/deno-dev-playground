@@ -3,6 +3,9 @@ import { serve } from "https://deno.land/std@0.103.0/http/server.ts";
 import { createDeploySource } from "./create_deploy_source.ts";
 import { parse as parseYaml } from "https://deno.land/std@0.103.0/encoding/yaml.ts";
 
+import shuffle from "https://deno.land/x/shuffle@v1.0.0/mod.ts";
+import { range } from "https://deno.land/x/it_range@v1.0.2/mod.ts";
+
 interface CssObject {
   [key: string]: { [key: string]: unknown };
 }
@@ -83,19 +86,18 @@ const styles = css(cssObject);
 const rainCount = 30;
 const getRandomInt = (max: number) => Math.floor(Math.random() * max);
 const delays: CssObject = {};
-for (let i = 1; i <= rainCount; i++) {
-  const delay = {
-    "animation-delay": `${i * 100}ms`,
+shuffle([...range(rainCount)]).forEach((num: number, idx) => {
+  delays[`.drop:nth-child(${idx})`] = {
+    "animation-delay": `${num * 100}ms`,
     "animation-duration": `${getRandomInt(250) + 375}ms`,
-    // left: `${getRandomInt(100) + 375}vw`,
   };
-  const objKey = `.drop:nth-child(${i})`;
-
-  delays[objKey] = delay;
-}
+});
 
 const rainStyle = css({
   ".rain": {
+    "user-select": "none",
+    "pointer-events": "none",
+    "z-index": 1,
     position: "fixed",
     width: "100%",
     height: "100%",
