@@ -66,9 +66,12 @@ list:
       - icon: simple/ubereats
         text: "Uber Eats promotion code: eats-2j5di9k7b0"
         url: "https://ubereats.com/feed?promoCode=eats-2j5di9k7b0"
-      - icon: dollar-sign
-        text: "Moppy invitation code: rUK7e101"
-        url: "https://pc.moppy.jp/entry/invite.php?invite=rUK7e101"
       - icon: shopping-bag
         text: "Rakuma invitation code: GHMt4"
         url: "https://fril.jp/download"
+      - icon: dollar-sign
+        text: "Moppy invitation code: rUK7e101"
+        url: "https://pc.moppy.jp/entry/invite.php?invite=rUK7e101"
+      - icon: dollar-sign
+        text: "GPoint invitation code: 6827763"
+        url: "https://www.gpoint.co.jp/fd/?u=6827763&r=01"
