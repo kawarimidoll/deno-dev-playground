@@ -57,9 +57,6 @@ if (list.length === 0) {
   throw new Error("list item is empty");
 }
 
-const cssObject = parseYaml(Deno.readTextFileSync("./style.yml")) as CssObject;
-const styles = css(cssObject);
-
 const icongram = (name: string, size = 20, attrs = {}) =>
   h("img", {
     src: `https://icongr.am/${
@@ -81,6 +78,43 @@ const renderListItem = (listItem: ListItem) => {
     : iconText(icon, text);
 };
 
+const cssObject = parseYaml(Deno.readTextFileSync("./style.yml")) as CssObject;
+const styles = css(cssObject);
+const rainCount = 30;
+const getRandomInt = (max: number) => Math.floor(Math.random() * max);
+const delays: CssObject = {};
+for (let i = 1; i <= rainCount; i++) {
+  const delay = {
+    "animation-delay": `${i * 100}ms`,
+    "animation-duration": `${getRandomInt(250) + 375}ms`,
+    // left: `${getRandomInt(100) + 375}vw`,
+  };
+  const objKey = `.drop:nth-child(${i})`;
+
+  delays[objKey] = delay;
+}
+
+const rainStyle = css({
+  ".rain": {
+    position: "fixed",
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    "justify-content": "space-around",
+    transform: "rotate(10deg)",
+  },
+  ".drop": {
+    width: "1px",
+    height: "10vh",
+    background: "#fff",
+    opacity: 0.4,
+    animation: "falldown 1s infinite",
+    "margin-top": "-20vh",
+    "animation-timing-function": "linear",
+  },
+}) + css(delays) +
+  `@keyframes falldown{ to{ margin-top: 120vh } }`;
+
 const htmlHead = h(
   "head",
   { prefix: "og:http://ogp.me/ns#" },
@@ -99,11 +133,13 @@ const htmlHead = h(
   twitter ? h("meta", { name: "twitter:site", content: twitter }) : "",
   h("title", title),
   h("style", styles),
+  h("style", rainStyle),
   favicon ? h("link", { rel: "icon", href: favicon }) : "",
 );
 
 const htmlBody = h(
   "body",
+  h("div", { class: "rain" }, h("div", { class: "drop" }).repeat(rainCount)),
   h(
     "div",
     { id: "main" },
