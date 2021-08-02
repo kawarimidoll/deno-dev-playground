@@ -2,7 +2,6 @@ import { tag as h } from "https://deno.land/x/markup_tag@0.1.2/mod.ts";
 import { serve } from "https://deno.land/std@0.103.0/http/server.ts";
 import { createDeploySource } from "./create_deploy_source.ts";
 import { parse as parseYaml } from "https://deno.land/std@0.103.0/encoding/yaml.ts";
-
 import shuffle from "https://deno.land/x/shuffle@v1.0.0/mod.ts";
 import { range } from "https://deno.land/x/it_range@v1.0.2/mod.ts";
 
@@ -64,7 +63,7 @@ const icongram = (name: string, size = 20, attrs = {}) =>
   h("img", {
     src: `https://icongr.am/${
       name.replace(/(^[^\/]*$)/, "feather/$1")
-    }.svg?size=${size}&color=ffffff`,
+    }.svg?size=${size}&color=f0ffff`,
     alt: name,
     ...attrs,
   });
@@ -81,8 +80,6 @@ const renderListItem = (listItem: ListItem) => {
     : iconText(icon, text);
 };
 
-const cssObject = parseYaml(Deno.readTextFileSync("./style.yml")) as CssObject;
-const styles = css(cssObject);
 const rainCount = 30;
 const getRandomInt = (max: number) => Math.floor(Math.random() * max);
 const delays: CssObject = {};
@@ -94,28 +91,81 @@ shuffle([...range(rainCount)]).forEach((num: number, idx) => {
   };
 });
 
-const rainStyle = css({
-  ".rain": {
-    "user-select": "none",
-    "pointer-events": "none",
-    "z-index": 1,
-    position: "fixed",
-    width: "120%",
-    height: "100%",
-    display: "flex",
-    "justify-content": "space-around",
-    transform: "rotate(10deg)",
-  },
-  ".drop": {
-    width: "1px",
-    height: "10vh",
-    background: "#fff",
-    "animation-name": "falldown",
-    "animation-iteration-count": "infinite",
-    "margin-top": "-20vh",
-    "animation-timing-function": "linear",
-  },
-}) + css(delays) +
+const cssYml = `
+body:
+  display: flex
+  justify-content: center
+  margin: 0
+  text-align: center
+  scroll-behavior: smooth
+  font-family: "sans-serif,monospace"
+  background-color: "#111"
+  color: azure
+a:
+  # text-decoration: none
+  color: inherit
+h2:
+  margin: "-2rem auto 0"
+  padding-top: 4rem
+img:
+  display: block
+  margin: 0 auto
+"#main":
+  width: 100%
+  max-width: 800px
+  padding: 1rem 0.5rem
+.avatar:
+  border-radius: 50%
+  width: 260px
+  height: 260px
+  object-fit: cover
+.bio:
+  margin-bottom: 2rem
+.list-group:
+  max-width: 500px
+  margin: 0 auto
+  margin-bottom: 2rem
+.list-item:
+  border-radius: 5px
+  border: "thin solid azure"
+  margin: 0.5rem auto
+  padding: 0.5rem 2rem
+.nav-box:
+  background-color: "#111"
+  position: sticky
+  top: 0
+  border-bottom: "thin solid azure"
+.nav:
+  display: flex
+  justify-content: space-around
+  margin: 0 auto
+  padding: 0.5rem
+  width: 100%
+  max-width: 300px
+.nav>a:
+  display: block
+.inline:
+  display: inline
+.rain:
+  user-select: none
+  pointer-events: none
+  z-index: 1
+  position: fixed
+  width: 120%
+  height: 100%
+  display: flex
+  justify-content: space-around
+  transform: rotate(10deg)
+.drop:
+  width: 1px
+  height: 10vh
+  background: '#fff'
+  animation-name: falldown
+  animation-iteration-count: infinite
+  margin-top: '-20vh'
+  animation-timing-function: linear
+`;
+const styles = css(parseYaml(cssYml) as CssObject) + css(delays) +
   `@keyframes falldown{to{margin-top:120vh}}`;
 
 const htmlHead = h(
@@ -136,7 +186,6 @@ const htmlHead = h(
   twitter ? h("meta", { name: "twitter:site", content: twitter }) : "",
   h("title", title),
   h("style", styles),
-  h("style", rainStyle),
   favicon ? h("link", { rel: "icon", href: favicon }) : "",
 );
 
