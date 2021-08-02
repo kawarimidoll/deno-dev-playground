@@ -3,7 +3,10 @@ import { serve } from "https://deno.land/std@0.103.0/http/server.ts";
 import { createDeploySource } from "./create_deploy_source.ts";
 import { parse as parseYaml } from "https://deno.land/std@0.103.0/encoding/yaml.ts";
 
-const css = (cssObject: Record<string, Record<string, unknown>>) =>
+interface CssObject {
+  [key: string]: { [key: string]: unknown };
+}
+const css = (cssObject: CssObject) =>
   Object.entries(cssObject).map(([selector, attributes]) =>
     selector + "{" +
     Object.entries(attributes).map(([k, v]) => `${k}:${v}`).join(";") +
@@ -39,77 +42,29 @@ const {
   avatar,
   favicon,
   twitter: twitterInConfig,
-  list,
+  list: listInConfig,
 } = parseYaml(Deno.readTextFileSync("./config.yml")) as ProfileConfiguration;
 
 // TODO: validate with custom schema
-if (!name || !projectName || !avatar || !list) {
+if (!name || !projectName || !avatar || !listInConfig) {
   throw new Error("missing required data");
-}
-if (Object.keys(list).length === 0) {
-  throw new Error("list item is empty");
 }
 
 const title = titleInConfig || `${name} profile`;
 const twitter = (twitterInConfig || "").replace(/^([^@])/, "@$1");
-const styles = css({
-  body: {
-    display: "flex",
-    "justify-content": "center",
-    margin: "0",
-    "text-align": "center",
-    "scroll-behavior": "smooth",
-    "font-family": "sans-serif,monospace",
-  },
-  a: { "text-decoration": "none", color: "inherit" },
-  h2: {
-    "margin-block-start": "-2rem",
-    "margin-block-end": "0",
-    "padding-top": "4rem",
-  },
-  img: { display: "block", margin: "0 auto" },
-  "#main": { width: "100%", "max-width": "800px", padding: "1rem 0.5rem" },
-  ".avatar": {
-    "border-radius": "50%",
-    width: "260px",
-    height: "260px",
-    "object-fit": "cover",
-  },
-  ".list-group": { "max-width": "500px", margin: "0 auto" },
-  ".list-item": {
-    "border-radius": "5px",
-    "border-style": "solid",
-    "border-width": "thin",
-    margin: "0.5rem auto",
-    padding: "0.5rem 2rem",
-  },
-  ".nav-box": {
-    "background-color": "#fff",
-    position: "sticky",
-    top: "0",
-    "border-bottom": "1px solid #222",
-  },
-  ".nav": {
-    display: "flex",
-    "justify-content": "space-around",
-    margin: "0 auto",
-    padding: "0.5rem",
-    width: "100%",
-    "max-width": "300px",
-  },
-  ".nav>a": {
-    display: "block",
-  },
-  ".inline": {
-    display: "inline",
-  },
-});
+const list = Object.entries(listInConfig);
+if (list.length === 0) {
+  throw new Error("list item is empty");
+}
+
+const cssObject = parseYaml(Deno.readTextFileSync("./style.yml")) as CssObject;
+const styles = css(cssObject);
 
 const icongram = (name: string, size = 20, attrs = {}) =>
   h("img", {
     src: `https://icongr.am/${
       name.replace(/(^[^\/]*$)/, "feather/$1")
-    }.svg?size=${size}`,
+    }.svg?size=${size}&color=ffffff`,
     alt: name,
     ...attrs,
   });
@@ -126,64 +81,60 @@ const renderListItem = (listItem: ListItem) => {
     : iconText(icon, text);
 };
 
-const html = "<!DOCTYPE html>" +
+const htmlHead = h(
+  "head",
+  { prefix: "og:http://ogp.me/ns#" },
+  h("meta", { charset: "utf-8" }),
+  h("meta", {
+    name: "viewport",
+    content: "width=device-width,initial-scale=1.0",
+  }),
+  h("meta", { property: "og:url", content: `https://${projectName}.deno.dev` }),
+  h("meta", { property: "og:type", content: "website" }),
+  h("meta", { property: "og:title", content: title }),
+  h("meta", { property: "og:description", content: `About ${name}` }),
+  h("meta", { property: "og:site_name", content: title }),
+  h("meta", { property: "og:image", content: avatar }),
+  h("meta", { name: "twitter:card", content: "summary" }),
+  twitter ? h("meta", { name: "twitter:site", content: twitter }) : "",
+  h("title", title),
+  h("style", styles),
+  favicon ? h("link", { rel: "icon", href: favicon }) : "",
+);
+
+const htmlBody = h(
+  "body",
   h(
-    "html",
+    "div",
+    { id: "main" },
+    h("img", { alt: "avatar", class: "avatar", src: avatar }),
+    h("h1", name),
+    bio ? h("div", { style: "margin-bottom:2rem" }, bio) : "",
+    h("div", "Click to jump..."),
     h(
-      "head",
-      { prefix: "og:http://ogp.me/ns#" },
-      h("meta", { charset: "utf-8" }),
-      h("meta", {
-        name: "viewport",
-        content: "width=device-width,initial-scale=1.0",
-      }),
-      h("meta", {
-        property: "og:url",
-        content: `https://${projectName}.deno.dev`,
-      }),
-      h("meta", { property: "og:type", content: "website" }),
-      h("meta", { property: "og:title", content: title }),
-      h("meta", { property: "og:description", content: `About ${name}` }),
-      h("meta", { property: "og:site_name", content: title }),
-      h("meta", { property: "og:image", content: avatar }),
-      h("meta", { name: "twitter:card", content: "summary" }),
-      twitter ? h("meta", { name: "twitter:site", content: twitter }) : "",
-      h("title", title),
-      h("style", styles),
-      favicon ? h("link", { rel: "icon", href: favicon }) : "",
-    ),
-    h(
-      "body",
+      "div",
+      { class: "nav-box" },
       h(
         "div",
-        { id: "main" },
-        h("img", { alt: "avatar", class: "avatar", src: avatar }),
-        h("h1", name),
-        bio ? h("div", { style: "margin-bottom:2rem" }, bio) : "",
-        h("div", "Click to jump..."),
-        h(
-          "div",
-          { class: "nav-box" },
-          h(
-            "div",
-            { class: "nav" },
-            ...Object.entries(list).map(([id, listGroup]) => {
-              return h("a", { href: `#${id}` }, icongram(listGroup.icon, 26));
-            }),
-          ),
-        ),
-        h(
-          "div",
-          { class: "list-group" },
-          ...Object.entries(list).map(([id, listGroup]) => {
-            const { icon, items } = listGroup;
-            return h("h2", { id }, icongram(icon, 40)) +
-              items.map((listItem) => renderListItem(listItem)).join("");
-          }),
+        { class: "nav" },
+        ...list.map(([id, listGroup]) =>
+          h("a", { href: `#${id}` }, icongram(listGroup.icon, 26))
         ),
       ),
     ),
-  );
+    h(
+      "div",
+      { class: "list-group" },
+      ...list.map(([id, listGroup]) => {
+        const { icon, items } = listGroup;
+        return h("h2", { id }, icongram(icon, 40)) +
+          items.map((listItem) => renderListItem(listItem)).join("");
+      }),
+    ),
+  ),
+);
+
+const html = "<!DOCTYPE html>" + h("html", htmlHead, htmlBody);
 
 if (Deno.args.includes("--build") || Deno.args.includes("-b")) {
   Deno.writeTextFileSync("./server.js", createDeploySource(html));

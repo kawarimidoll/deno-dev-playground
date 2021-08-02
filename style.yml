@@ -1,0 +1,54 @@
+body:
+  display: flex
+  justify-content: center
+  margin: 0
+  text-align: center
+  scroll-behavior: smooth
+  font-family: "sans-serif,monospace"
+  background-color: "#111"
+  color: "#fff"
+a:
+  text-decoration: none
+  color: inherit
+h2:
+  margin-block-start: "-2rem"
+  margin-block-end: "0"
+  padding-top: 4rem
+img:
+  display: block
+  margin: 0 auto
+"#main":
+  width: 100%
+  max-width: 800px
+  padding: 1rem 0.5rem
+.avatar:
+  border-radius: 50%
+  width: 260px
+  height: 260px
+  object-fit: cover
+.list-group:
+  max-width: 500px
+  margin: 0 auto
+.list-item:
+  border-radius: 5px
+  border-style: solid
+  border-width: thin
+  border-color: "#fff"
+  margin: 0.5rem auto
+  padding: 0.5rem 2rem
+.nav-box:
+  background-color: "#111"
+  position: sticky
+  top: "0"
+  border-bottom: "1px solid #eee"
+.nav:
+  display: flex
+  justify-content: space-around
+  margin: 0 auto
+  padding: 0.5rem
+  width: 100%
+  max-width: 300px
+.nav>a:
+  display: block
+.inline:
+  display: inline
