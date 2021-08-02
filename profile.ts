@@ -109,7 +109,7 @@ const htmlBody = h(
     { id: "main" },
     h("img", { alt: "avatar", class: "avatar", src: avatar }),
     h("h1", name),
-    bio ? h("div", { style: "margin-bottom:2rem" }, bio) : "",
+    bio ? h("div", { class: "bio" }, bio) : "",
     h("div", "Click to jump..."),
     h(
       "div",
@@ -131,6 +131,7 @@ const htmlBody = h(
           items.map((listItem) => renderListItem(listItem)).join("");
       }),
     ),
+    h("div", "Powered by deno deploy"),
   ),
 );
 
