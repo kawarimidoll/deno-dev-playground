@@ -18,6 +18,8 @@ import formatISO from "https://deno.land/x/date_fns@v2.22.1/formatISO/index.js";
 
 import { TwitterApi } from "https://raw.githubusercontent.com/stefanuros/deno_twitter_api/v1.2.1/mod.ts";
 
+import { TextDB } from "https://deno.land/x/textdb@0.1.2/mod.ts";
+
 export {
   add as addDate,
   compareAsc,
@@ -30,6 +32,7 @@ export {
   parse,
   rgb24,
   stringWidth,
+  TextDB,
   TwitterApi,
 };
 export type { Feed, RSS1, RSS2 };

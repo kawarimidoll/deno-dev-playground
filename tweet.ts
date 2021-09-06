@@ -7,7 +7,7 @@ import {
   TWITTER_API_SECRET,
 } from "./env.ts";
 
-const sendTweet = async (status: string) => {
+export async function sendTweet(status: string) {
   try {
     const twitterApi = new TwitterApi({
       consumerApiKey: TWITTER_API_KEY,
@@ -23,6 +23,4 @@ const sendTweet = async (status: string) => {
     console.error(error);
     return `${error}`;
   }
-};
-
-export { sendTweet };
+}
