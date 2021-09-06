@@ -1,7 +1,7 @@
 import { ky } from "./deps.ts";
 const url = "https://notify-api.line.me/api/notify";
 
-const lineNotify = async (
+export async function lineNotify(
   params: {
     message: string;
     token: string;
@@ -9,9 +9,13 @@ const lineNotify = async (
     imageFullsizeURL?: string;
     imageFile?: File;
   },
-) => {
+) {
   const { message, token, imageThumbnailURL, imageFullsizeURL, imageFile } =
     params;
+
+  if (!message || !token) {
+    throw new Error("Missing message or token");
+  }
 
   const body = new FormData();
   body.append("message", message);
@@ -30,13 +34,9 @@ const lineNotify = async (
   }
 
   try {
-    return await ky.post(url, {
-      headers: { Authorization: `Bearer ${token}` },
-      body,
-    }).json();
+    const headers = { Authorization: `Bearer ${token}` };
+    return await ky.post(url, { headers, body }).json();
   } catch (error) {
     return await error.response.json();
   }
-};
-
-export { lineNotify };
+}
