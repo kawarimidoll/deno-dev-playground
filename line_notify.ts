@@ -7,36 +7,33 @@ export async function lineNotify(
     token: string;
     imageThumbnailURL?: string;
     imageFullsizeURL?: string;
-    imageFile?: File;
   },
 ) {
-  const { message, token, imageThumbnailURL, imageFullsizeURL, imageFile } =
-    params;
+  const { message, token, imageThumbnailURL, imageFullsizeURL } = params;
 
   if (!message || !token) {
     throw new Error("Missing message or token");
   }
 
-  const body = new FormData();
-  body.append("message", message);
+  const body = new URLSearchParams();
+  body.set("message", message);
   if (imageThumbnailURL) {
     // validate url
     new URL(imageThumbnailURL);
-    body.append("imageThumbnail", imageThumbnailURL);
+    body.set("imageThumbnail", imageThumbnailURL);
   }
   if (imageFullsizeURL) {
     // validate url
     new URL(imageFullsizeURL);
-    body.append("imageFullsize", imageFullsizeURL);
-  }
-  if (imageFile) {
-    body.append("imageFile", imageFile);
+    body.set("imageFullsize", imageFullsizeURL);
   }
 
   try {
     const headers = { Authorization: `Bearer ${token}` };
     return await ky.post(url, { headers, body }).json();
   } catch (error) {
-    return await error.response.json();
+    console.error(`${error}`);
+    return error;
+    // return await error.response.json();
   }
 }
