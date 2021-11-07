@@ -4,21 +4,18 @@ import { parse as parseCliArgs } from "https://deno.land/std@0.113.0/flags/mod.t
 
 const log = new Log({ datetimeFormat: "" });
 
-async function watchProcessError(process: Deno.Process) {
-  try {
-    await process.status();
-    info("Watching for changes...");
-  } catch (error) {
-    log.warn(error);
-  }
-}
-
 function runAndWatchErrors(cmd: string[], ongoingProcess?: Deno.Process) {
   if (ongoingProcess) {
     ongoingProcess.close();
   }
   const process = Deno.run({ cmd });
-  watchProcessError(process);
+  process.status().then((status) => {
+    if (Object.hasOwn(status, "signal")) {
+      // info(`Process finished by signal ${status.signal}`);
+    } else {
+      info("Process finished. Restarting on file change...");
+    }
+  });
   return process;
 }
 
@@ -95,9 +92,10 @@ const watchedFiles = watch ? [filename, ...watch.split(",")] : [filename];
 const cmd = [
   "deno",
   /^(.*[._])?test\.m?[tj]sx?$/.test(filename) ? "test" : "run",
-  "-A",
+  "--allow-all",
   "--no-check",
   "--unstable",
+  "--watch",
   filename,
 ];
 
@@ -123,6 +121,14 @@ for await (const event of Deno.watchFs(watchedFiles)) {
     console.clear();
   } else {
     info("File changed:", event.paths[0]);
+  }
+
+  try {
+    process.kill("SIGTERM");
+  } catch (error) {
+    if (error.message !== "ESRCH: No such process") {
+      throw error;
+    }
   }
 
   process = runAndWatchErrors(cmd, process);
