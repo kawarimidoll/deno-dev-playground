@@ -71,6 +71,7 @@ const {
     },
   },
 );
+
 if (version) {
   console.log(versionInfo);
   Deno.exit(0);
@@ -108,8 +109,8 @@ info("Process is started.");
 info("Watching files:", watchedFiles);
 
 let process = runAndWatchErrors(cmd);
-
-const debounceInterval = 500;
+// https://github.com/denoland/deno/blob/0ec151b8cb2a92bb1765672fa15de23e6c8842d4/cli/file_watcher.rs#L32
+const DEBOUNCE_INTERVAL = 200;
 let reloading = false;
 
 for await (const event of Deno.watchFs(watchedFiles)) {
@@ -126,5 +127,5 @@ for await (const event of Deno.watchFs(watchedFiles)) {
 
   process = runAndWatchErrors(cmd, process);
 
-  setTimeout(() => (reloading = false), debounceInterval);
+  setTimeout(() => (reloading = false), DEBOUNCE_INTERVAL);
 }
