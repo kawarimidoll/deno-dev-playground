@@ -3,6 +3,7 @@ import {
   brightBlue,
   red,
 } from "https://deno.land/std@0.113.0/fmt/colors.ts";
+import { relative, resolve } from "https://deno.land/std@0.113.0/path/mod.ts";
 import { parse as parseCliArgs } from "https://deno.land/std@0.113.0/flags/mod.ts";
 
 function runAndWatchErrors(cmd: string[], ongoingProcess?: Deno.Process) {
@@ -101,8 +102,11 @@ if (!args[0]) {
   Deno.exit(1);
 }
 
-const filename = `${args[0]}`;
-const watchedFiles = watch ? [filename, ...watch.split(",")] : [filename];
+const filename = resolve(Deno.cwd(), `${args[0]}`);
+
+const watchedFiles = (watch ? [filename, ...watch.split(",")] : [filename]).map(
+  (path) => relative(Deno.cwd(), path)
+);
 
 const cmd = [
   "deno",
