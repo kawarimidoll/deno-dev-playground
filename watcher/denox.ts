@@ -105,7 +105,7 @@ if (!args[0]) {
 }
 
 const filename = `${args[0]}`;
-// const watchedFiles = watch ? [filename, ...watch.split(",")] : [filename];
+const watchedFiles = watch ? [filename, ...watch.split(",")] : [filename];
 
 const cmd = [
   "deno",
@@ -116,25 +116,22 @@ const cmd = [
   filename,
 ];
 
-const info = quiet ? () => {} : (message: string) => log.info(message);
+const info = quiet ? () => {} : (...args: unknown[]) => log.info(...args);
 
 info("Process is started.");
+info("Watching files:", watchedFiles);
 
 let process = runAndWatchErrors(cmd);
 
 info("Watching for changes...");
 
-await watchChanges([filename], (event) => {
+await watchChanges(watchedFiles, (event) => {
   if (clear) {
     console.clear();
   } else {
-    info("File change detected.");
-    info(event.paths[0]);
+    info("File changed:", event.paths[0]);
   }
 
   process = runAndWatchErrors(cmd, process);
-  setTimeout(
-    () => info("Process finished. Watching for changes..."),
-    2500,
-  );
+  info("Watching for changes...");
 });
