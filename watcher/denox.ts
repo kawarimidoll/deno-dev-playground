@@ -23,22 +23,24 @@ function runAndWatchErrors(cmd: string[], ongoingProcess?: Deno.Process) {
 }
 
 const VERSION = "0.1.0";
-const versionInfo = `dr ${VERSION}`;
-const logPrefix = blue("dr");
-const helpMsg = `Usage:
+const versionInfo = `dex ${VERSION}`;
+const logPrefix = blue("dex");
+const helpMsg = `
 ${versionInfo}
+An easy deno runner for development.
 
-  Easy deno runner for development.
+EXAMPLE:
+  dex hello.ts
 
 USAGE:
-  dr hello.ts
+  dex [OPTIONS] <FILENAME>
 
 OPTIONS:
-  -v, --version           Shows the version number.
-  -h, --help              Shows the help message.
-  -c, --clear             Clears console every running.
-  -q, --quiet             Dismiss console messages.
-  -w, --watch             Reveals the given arguments.
+  -v, --version           Show the version number.
+  -h, --help              Show the help message.
+  -c, --clear             Clear console every running.
+  -q, --quiet             Suppress console messages of dex.
+  -w, --watch <filenames> Watch the given files.
 `;
 
 const {
@@ -79,10 +81,10 @@ if (help) {
 }
 
 if (!args[0]) {
-  log.error("filename is required");
+  log.error("Error: filename is required");
   Deno.exit(1);
 } else if (args.length > 1) {
-  log.error("too many arguments");
+  log.error("Error: too many arguments");
   Deno.exit(1);
 }
 
