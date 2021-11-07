@@ -1,8 +1,9 @@
-import { Log } from "https://deno.land/x/tl_log@0.1.1/mod.ts";
-import { blue } from "https://deno.land/std@0.113.0/fmt/colors.ts";
+import {
+  bold,
+  brightBlue,
+  red,
+} from "https://deno.land/std@0.113.0/fmt/colors.ts";
 import { parse as parseCliArgs } from "https://deno.land/std@0.113.0/flags/mod.ts";
-
-const log = new Log({ datetimeFormat: "" });
 
 function runAndWatchErrors(cmd: string[], ongoingProcess?: Deno.Process) {
   if (ongoingProcess) {
@@ -21,7 +22,7 @@ function runAndWatchErrors(cmd: string[], ongoingProcess?: Deno.Process) {
 
 const VERSION = "0.1.0";
 const versionInfo = `dex ${VERSION}`;
-const logPrefix = blue("dex");
+const logPrefix = brightBlue("Watcher");
 const helpMsg = `
 ${versionInfo}
 An easy deno runner for development.
@@ -37,7 +38,10 @@ OPTIONS:
   -h, --help              Show the help message.
   -c, --clear             Clear console every running.
   -q, --quiet             Suppress console messages of dex.
-  -w, --watch <filenames> Watch the given files.
+  -w, --watch <filenames> Watch the given files. Comma-separated list is allowed.
+
+ARGS:
+  <FILENAME>              The file to run or test.
 `;
 
 const {
@@ -78,11 +82,22 @@ if (help) {
   Deno.exit(0);
 }
 
+const cliError = (message: string) => {
+  const errorMsg = `
+USAGE:
+  dex [OPTIONS] <FILENAME>
+
+For more information try --help
+`;
+  console.error(bold(red("error")) + ":", message);
+  console.error(errorMsg);
+};
+
 if (!args[0]) {
-  log.error("Error: filename is required");
+  cliError("Filename is required as argument.");
   Deno.exit(1);
 } else if (args.length > 1) {
-  log.error("Error: too many arguments");
+  cliError("Too many arguments found.");
   Deno.exit(1);
 }
 
@@ -101,7 +116,7 @@ const cmd = [
 
 const info = quiet
   ? () => {}
-  : (...args: unknown[]) => log.info(logPrefix, ...args);
+  : (...args: unknown[]) => console.log(logPrefix, ...args);
 
 info("Process is started.");
 info("Watching files:", watchedFiles);
@@ -120,7 +135,7 @@ for await (const event of Deno.watchFs(watchedFiles)) {
   if (clear) {
     console.clear();
   } else {
-    info("File changed:", event.paths[0]);
+    info("File change detected! Restarting!");
   }
 
   try {
