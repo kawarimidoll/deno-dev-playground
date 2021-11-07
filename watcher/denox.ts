@@ -1,14 +1,15 @@
 import { Log } from "https://deno.land/x/tl_log@0.1.1/mod.ts";
+import { parse as parseCliArgs } from "https://deno.land/std@0.113.0/flags/mod.ts";
 
 const log = new Log({ datetimeFormat: "" });
 
 async function watchChanges(
-  path: string,
+  paths: string[],
   onChange: (event: Deno.FsEvent) => void,
   config = { interval: 500 },
 ) {
   let reloading = false;
-  for await (const event of Deno.watchFs(path)) {
+  for await (const event of Deno.watchFs(paths)) {
     if (event.kind !== "modify" || reloading) {
       continue;
     }
@@ -40,12 +41,71 @@ function runAndWatchErrors(
   return process;
 }
 
-const filename = Deno.args[0];
-if (!filename) {
+const VERSION = "0.1.0";
+const versionInfo = `dr ${VERSION}`;
+const helpMsg = `Usage:
+${versionInfo}
+
+  Easy deno runner for development.
+
+USAGE:
+  dr hello.ts
+
+OPTIONS:
+  -v, --version           Shows the version number.
+  -h, --help              Shows the help message.
+  -c, --clear             Clears console every running.
+  -q, --quiet             Dismiss console messages.
+  -w, --watch             Reveals the given arguments.
+`;
+
+const {
+  "_": args,
+  clear,
+  help,
+  quiet,
+  version,
+  watch,
+} = parseCliArgs(
+  Deno.args,
+  {
+    boolean: [
+      "clear",
+      "help",
+      "quiet",
+      "version",
+    ],
+    string: [
+      "watch",
+    ],
+    alias: {
+      c: "clear",
+      h: "help",
+      q: "quiet",
+      v: "version",
+      w: "watch",
+    },
+  },
+);
+if (version) {
+  console.log(versionInfo);
+  Deno.exit(0);
+}
+if (help) {
+  console.log(helpMsg);
+  Deno.exit(0);
+}
+
+if (!args[0]) {
   log.error("filename is required");
   Deno.exit(1);
+} else if (args.length > 1) {
+  log.error("too many arguments");
+  Deno.exit(1);
 }
-const toClear = Deno.args[1] === "--clear";
+
+const filename = `${args[0]}`;
+// const watchedFiles = watch ? [filename, ...watch.split(",")] : [filename];
 
 const cmd = [
   "deno",
@@ -56,19 +116,25 @@ const cmd = [
   filename,
 ];
 
+const info = quiet ? () => {} : (message: string) => log.info(message);
+
+info("Process is started.");
+
 let process = runAndWatchErrors(cmd);
 
-log.debug("Process is started.");
-log.info("Watching for changes...");
+info("Watching for changes...");
 
-await watchChanges(filename, (event) => {
-  if (toClear) {
+await watchChanges([filename], (event) => {
+  if (clear) {
     console.clear();
   } else {
-    log.info("File change detected.");
-    log.info(event.paths[0]);
+    info("File change detected.");
+    info(event.paths[0]);
   }
 
   process = runAndWatchErrors(cmd, process);
-  setTimeout(() => log.info("Watching for changes..."), 2500);
+  setTimeout(
+    () => info("Process finished. Watching for changes..."),
+    2500,
+  );
 });
