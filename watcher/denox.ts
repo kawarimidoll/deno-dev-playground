@@ -1,23 +1,19 @@
 import { Log } from "https://deno.land/x/tl_log@0.1.1/mod.ts";
+import { blue } from "https://deno.land/std@0.113.0/fmt/colors.ts";
 import { parse as parseCliArgs } from "https://deno.land/std@0.113.0/flags/mod.ts";
 
 const log = new Log({ datetimeFormat: "" });
 
 async function watchProcessError(process: Deno.Process) {
   try {
-    if (!(await process.status()).success) {
-      log.warn("Error detected.");
-    }
+    await process.status();
     info("Watching for changes...");
   } catch (error) {
     log.warn(error);
   }
 }
 
-function runAndWatchErrors(
-  cmd: string[],
-  ongoingProcess?: Deno.Process,
-) {
+function runAndWatchErrors(cmd: string[], ongoingProcess?: Deno.Process) {
   if (ongoingProcess) {
     ongoingProcess.close();
   }
@@ -28,6 +24,7 @@ function runAndWatchErrors(
 
 const VERSION = "0.1.0";
 const versionInfo = `dr ${VERSION}`;
+const logPrefix = blue("dr");
 const helpMsg = `Usage:
 ${versionInfo}
 
@@ -101,7 +98,9 @@ const cmd = [
   filename,
 ];
 
-const info = quiet ? () => {} : (...args: unknown[]) => log.info(...args);
+const info = quiet
+  ? () => {}
+  : (...args: unknown[]) => log.info(logPrefix, ...args);
 
 info("Process is started.");
 info("Watching files:", watchedFiles);
