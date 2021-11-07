@@ -3,27 +3,12 @@ import { parse as parseCliArgs } from "https://deno.land/std@0.113.0/flags/mod.t
 
 const log = new Log({ datetimeFormat: "" });
 
-async function watchChanges(
-  paths: string[],
-  onChange: (event: Deno.FsEvent) => void,
-  config = { interval: 500 },
-) {
-  let reloading = false;
-  for await (const event of Deno.watchFs(paths)) {
-    if (event.kind !== "modify" || reloading) {
-      continue;
-    }
-    reloading = true;
-    onChange(event);
-    setTimeout(() => (reloading = false), config.interval);
-  }
-}
-
 async function watchProcessError(process: Deno.Process) {
   try {
-    if ((await process.status()).success === false) {
-      log.warn("Error detected. Waiting for changes...");
+    if (!(await process.status()).success) {
+      log.warn("Error detected.");
     }
+    info("Watching for changes...");
   } catch (error) {
     log.warn(error);
   }
@@ -123,9 +108,15 @@ info("Watching files:", watchedFiles);
 
 let process = runAndWatchErrors(cmd);
 
-info("Watching for changes...");
+const debounceInterval = 500;
+let reloading = false;
 
-await watchChanges(watchedFiles, (event) => {
+for await (const event of Deno.watchFs(watchedFiles)) {
+  if (event.kind !== "modify" || reloading) {
+    continue;
+  }
+  reloading = true;
+
   if (clear) {
     console.clear();
   } else {
@@ -133,5 +124,6 @@ await watchChanges(watchedFiles, (event) => {
   }
 
   process = runAndWatchErrors(cmd, process);
-  info("Watching for changes...");
-});
+
+  setTimeout(() => (reloading = false), debounceInterval);
+}
