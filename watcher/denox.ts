@@ -3,8 +3,14 @@ import {
   brightBlue,
   red,
 } from "https://deno.land/std@0.113.0/fmt/colors.ts";
-import { relative, resolve } from "https://deno.land/std@0.113.0/path/mod.ts";
+import {
+  dirname,
+  join,
+  relative,
+  resolve,
+} from "https://deno.land/std@0.113.0/path/mod.ts";
 import { parse as parseCliArgs } from "https://deno.land/std@0.113.0/flags/mod.ts";
+import { ensureDir } from "https://deno.land/std@0.113.0/fs/ensure_dir.ts";
 
 function runAndWatchErrors(cmd: string[], ongoingProcess?: Deno.Process) {
   if (ongoingProcess) {
@@ -21,12 +27,30 @@ function runAndWatchErrors(cmd: string[], ongoingProcess?: Deno.Process) {
   return process;
 }
 
+async function getDenoDir() {
+  const p = Deno.run({
+    cmd: ["deno", "info"],
+    stdout: "piped",
+    stderr: "piped",
+  });
+  const denoDir = new TextDecoder().decode(await p.output())
+    .replace(/\n.*/g, "")
+    .replace(/^[^"]*"|"$/g, "");
+  p.close();
+  return denoDir;
+}
+
 const VERSION = "0.1.0";
 const versionInfo = `dex ${VERSION}`;
 const logPrefix = brightBlue("Watcher");
-const helpMsg = `
-${versionInfo}
+
+const DENO_DIR = await getDenoDir();
+const DEX_SCRIPT_PATH = join(DENO_DIR, "dex/script.ts");
+
+const helpMsg = `${versionInfo}
 An easy deno runner for development.
+
+Repository: https://github.com/kawarimidoll/deno-dex
 
 EXAMPLE:
   dex hello.ts
@@ -42,8 +66,7 @@ OPTIONS:
   -w, --watch <filenames> Watch the given files. Comma-separated list is allowed.
 
 ARGS:
-  <FILENAME>              The file to run or test.
-`;
+  <FILENAME>              The file to run or test.`;
 
 const {
   "_": args,
@@ -84,14 +107,13 @@ if (help) {
 }
 
 const cliError = (message: string) => {
-  const errorMsg = `
+  const errorMsg = `${message}
+
 USAGE:
   dex [OPTIONS] <FILENAME>
 
-For more information try --help
-`;
-  console.error(bold(red("error")) + ":", message);
-  console.error(errorMsg);
+For more information try --help`;
+  console.error(bold(red("error")) + ":", errorMsg);
 };
 
 if (!args[0]) {
@@ -105,7 +127,13 @@ if (!args[0]) {
 const filename = resolve(Deno.cwd(), `${args[0]}`);
 
 const watchedFiles = (watch ? [filename, ...watch.split(",")] : [filename]).map(
-  (path) => relative(Deno.cwd(), path)
+  (path) => relative(Deno.cwd(), path),
+);
+
+await ensureDir(dirname(DEX_SCRIPT_PATH));
+await Deno.writeTextFile(
+  DEX_SCRIPT_PATH,
+  (clear ? "console.clear();" : "") + `import("${filename}")`,
 );
 
 const cmd = [
@@ -115,7 +143,7 @@ const cmd = [
   "--no-check",
   "--unstable",
   "--watch",
-  filename,
+  DEX_SCRIPT_PATH,
 ];
 
 const info = quiet
@@ -136,11 +164,7 @@ for await (const event of Deno.watchFs(watchedFiles)) {
   }
   reloading = true;
 
-  if (clear) {
-    console.clear();
-  } else {
-    info("File change detected! Restarting!");
-  }
+  info("File change detected! Restarting!");
 
   try {
     process.kill("SIGTERM");
