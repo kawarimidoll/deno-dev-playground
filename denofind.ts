@@ -1,7 +1,7 @@
 // [WIP] denofind
-import { parse } from "https://deno.land/std@0.100.0/flags/mod.ts";
-import { relative, resolve } from "https://deno.land/std@0.100.0/path/mod.ts";
-import { walk, WalkEntry } from "https://deno.land/std@0.100.0/fs/mod.ts";
+import { parse } from "https://deno.land/std@0.119.0/flags/mod.ts";
+import { relative, resolve } from "https://deno.land/std@0.119.0/path/mod.ts";
+import { walk, WalkEntry } from "https://deno.land/std@0.119.0/fs/mod.ts";
 
 const { depth = "2", type, help, regex, _: [dir = "."] } = parse(Deno.args);
 

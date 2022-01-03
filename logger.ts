@@ -1,5 +1,5 @@
-import * as log from "https://deno.land/std@0.99.0/log/mod.ts";
-import { LogRecord } from "https://deno.land/std@0.99.0/log/logger.ts";
+import * as log from "https://deno.land/std@0.119.0/log/mod.ts";
+import { LogRecord } from "https://deno.land/std@0.119.0/log/logger.ts";
 
 const filename = "./app.log";
 const formatter = (logRecord: LogRecord) => {
